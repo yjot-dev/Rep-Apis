@@ -8,7 +8,7 @@ import { readFileSync } from 'fs';
 const app = express()
 
 // Configurar puerto
-app.set('port', process.env.PORT || 443)
+app.set('port', process.env.PORT || 3000)
 
 // Usar JSON con un limite de datos para el body request
 app.use(express.json({ limit: '20mb' }))
