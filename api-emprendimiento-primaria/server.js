@@ -15,6 +15,9 @@ app.use(express.json({ limit: '20mb' }))
 
 // Usar rutas
 app.use('/api', api)
+app.get('/', (_, res) => {
+  res.send('API funcionando 🚀');
+});
 
 // Lee el certificado y la clave privada 
 let credentials;
