@@ -4,11 +4,11 @@ import dotenv from 'dotenv';
 dotenv.config({ path: './src/bd/.env' });
 
 const dataConexion = {
-  host: process.env.MYSQL_HOST,
-  port: process.env.MYSQL_PORT,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
+  host: process.env.MYSQL_HOST ?? process.env.MYSQLHOST,
+  port: process.env.MYSQL_PORT ?? process.env.MYSQLPORT,
+  user: process.env.MYSQL_USER ?? process.env.MYSQLUSER,
+  password: process.env.MYSQL_PASSWORD ?? process.env.MYSQLPASSWORD,
+  database: process.env.MYSQL_DATABASE ?? process.env.MYSQLDATABASE,
 };
 
 const pool = mysql.createPool(dataConexion)

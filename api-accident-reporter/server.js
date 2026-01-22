@@ -8,11 +8,11 @@ import { readFileSync } from 'fs';
 const app = express()
 
 // Configurar puerto
-const port = process.env.PORT || 443;
-app.set('port', port)
+app.set('port', process.env.PORT || 443)
 
 // Usar JSON con un limite de datos para el body request
 app.use(express.json({ limit: '20mb' }))
+
 // Usar rutas
 app.use('/api', api)
 

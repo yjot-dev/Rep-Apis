@@ -12,13 +12,20 @@ app.set('port', process.env.PORT || 443)
 
 // Usar JSON con un limite de datos para el body request
 app.use(express.json({ limit: '20mb' }))
+
 // Usar rutas
 app.use('/api', api)
 
 // Lee el certificado y la clave privada 
-const privateKey = readFileSync('./src/certificate/mykey.key');
-const certificate = readFileSync('./src/certificate/mycert.crt');
-const credentials = { key: privateKey, cert: certificate };
+let credentials;
+try {
+    const privateKey = readFileSync('./src/certificate/mykey.key');
+    const certificate = readFileSync('./src/certificate/mycert.crt');
+    credentials = { key: privateKey, cert: certificate };
+} catch (error) {
+    console.error("Error al leer los certificados: ", error);
+    process.exit(1); // Finaliza la aplicación si hay un error con los certificados
+}
 
 // Crea el servidor HTTPS 
 const httpsServer = createServer(credentials, app);
