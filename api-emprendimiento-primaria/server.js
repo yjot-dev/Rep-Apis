@@ -1,43 +1,43 @@
-// Instanciar rutas
-import { api } from './src/routes/userRoute.js';
-
-// Instanciar modulos
 import express from 'express';
+import { api } from './src/routes/userRoute.js';
 import { createServer } from 'https';
 import { readFileSync } from 'fs';
+
 const app = express()
 
-// Configurar puerto
-app.set('port', process.env.PORT || 3000)
+// Configurar puerto dinámico
+const PORT = process.env.PORT || 3000;
 
-// Usar JSON con un limite de datos para el body request
+// Middlewares
 app.use(express.json({ limit: '20mb' }))
 
-// Usar rutas
+// Rutas
 app.use('/api', api)
 app.get('/', (_, res) => {
   res.send('API funcionando 🚀');
 });
 
-// Lee el certificado y la clave privada 
-let credentials;
-try {
+// Detectar entorno
+const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
+  // Remoto: solo HTTP, El servidor ya da HTTPS
+  app.listen(PORT, () => {
+    console.log(`Servidor corriendo en producción en puerto ${PORT}`);
+  });
+} else {
+  // Local: HTTPS con certificados autofirmados
+  try {
     const privateKey = readFileSync('./src/certificate/mykey.key');
     const certificate = readFileSync('./src/certificate/mycert.crt');
-    credentials = { key: privateKey, cert: certificate };
-} catch (error) {
+    const credentials = { key: privateKey, cert: certificate };
+
+    const httpsServer = createServer(credentials, app);
+    httpsServer.listen(PORT, () => {
+      console.log(`Servidor corriendo en desarrollo (HTTPS) en puerto ${PORT}`);
+    });
+  } catch (error) {
     console.error("Error al leer los certificados: ", error);
-    process.exit(1); // Finaliza la aplicación si hay un error con los certificados
+    process.exit(1);
+  }
 }
-
-// Crea el servidor HTTPS 
-const httpsServer = createServer(credentials, app);
-
-// Escuchar servicio
-httpsServer.listen(app.get('port'), (error) => {
-    if (error) {
-        console.log(`Sucedió un error: ${error}`);
-    }else{
-        console.log(`Servidor corriendo en el puerto: ${app.get('port')}`);
-    }
-});
