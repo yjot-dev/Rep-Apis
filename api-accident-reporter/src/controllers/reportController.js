@@ -1,4 +1,4 @@
-import pool from '../bd/db.js';
+import pool from "../bd/db.js";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
@@ -9,7 +9,7 @@ function isEmptyObject(obj) {
 const seleccionar_reportes = async function(_, res) {
     try {
         // Consulta todos los reportes
-        const sql1 = `SELECT * FROM reportes`;
+        const sql1 = "SELECT * FROM reportes";
         const reg1 = await pool.query(sql1);
 
         if (isEmptyObject(reg1)) {
@@ -31,7 +31,7 @@ const actualizar_reporte = async function(req, res) {
         const usuarioEditado = req.body;
 
         // Construir la consulta de actualización
-        const sql1 = `UPDATE reportes SET ? WHERE id = ?`;
+        const sql1 = "UPDATE reportes SET ? WHERE id = ?";
         const reg1 = await pool.query(sql1, [usuarioEditado, id]);
 
         res.status(200).send(reg1);
@@ -48,7 +48,7 @@ const insertar_reporte = async function(req, res) {
         const usuarioNuevo = req.body;
 
         // Construir la consulta de inserción
-        const sql1 = `INSERT INTO reportes SET ?`;
+        const sql1 = "INSERT INTO reportes SET ?";
         const reg1 = await pool.query(sql1, usuarioNuevo);
 
         res.status(200).send(reg1);
@@ -64,7 +64,7 @@ const eliminar_reporte = async function(req, res) {
         const id = req.params.id
 
         // Construir la consulta de eliminación
-        const sql = `DELETE FROM reportes WHERE id = ?`;
+        const sql = "DELETE FROM reportes WHERE id = ?";
         const reg = await pool.query(sql, id);
 
         res.status(200).send(reg);

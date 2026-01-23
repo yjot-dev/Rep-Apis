@@ -1,6 +1,6 @@
-import pool from '../bd/db.js';
-import bcrypt from 'bcrypt';
-import nodemailer from 'nodemailer';
+import pool from "../bd/db.js";
+import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
@@ -13,7 +13,7 @@ const findUser = async function(req, res) {
         const { nombre, correo, clave } = req.body;
 
         // Consulta para obtener el usuario por nombre o correo
-        const sql1 = `SELECT * FROM usuarios WHERE correo = ? OR nombre = ?`;
+        const sql1 = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
         const reg1 = await pool.query(sql1, [correo, nombre]);
         
         if (isEmptyObject(reg1)) {
@@ -30,7 +30,7 @@ const findUser = async function(req, res) {
 
         // Convertir el campo foto (MediumBlob) a una cadena Base64
         if (usuario.foto) {
-            usuario.foto = Buffer.from(usuario.foto).toString('base64');
+            usuario.foto = Buffer.from(usuario.foto).toString("base64");
         }
 
         res.status(200).send(usuario);
@@ -48,7 +48,7 @@ const updateUser = async function(req, res) {
         let { clave, foto, ...resto } = req.body; 
 
         // Consulta para obtener la clave del usuario
-        const sql1 = `SELECT clave FROM usuarios WHERE id = ?`;
+        const sql1 = "SELECT clave FROM usuarios WHERE id = ?";
         const reg1 = await pool.query(sql1, [id]);
         
         if (isEmptyObject(reg1)) {
@@ -67,7 +67,7 @@ const updateUser = async function(req, res) {
 
         // Convertir una cadena Base64 a MediumBlob
         if (foto) { 
-            foto = Buffer.from(foto, 'base64');
+            foto = Buffer.from(foto, "base64");
         }
 
         // Construir el objeto para actualizar
@@ -78,7 +78,7 @@ const updateUser = async function(req, res) {
         };
 
         // Construir la consulta de actualización
-        const sql2 = `UPDATE usuarios SET ? WHERE id = ?`;
+        const sql2 = "UPDATE usuarios SET ? WHERE id = ?";
         const reg2 = await pool.query(sql2, [usuarioEditado, id]);
 
         res.status(200).send(reg2);
@@ -97,7 +97,7 @@ const changePasswordUser = async function(req, res) {
         const claveHash = await bcrypt.hash(clave, 10);
 
         // Construir la consulta de cambio de clave
-        const sql = `UPDATE usuarios SET clave = ? WHERE correo = ?`;
+        const sql = "UPDATE usuarios SET clave = ? WHERE correo = ?";
         const reg = await pool.query(sql, [claveHash, correo]);
 
         res.status(200).send(reg);
@@ -124,14 +124,14 @@ const insertUser = async function(req, res) {
         };
 
         // Consulta el correo electronico para verificar si existe
-        const sql1 = `SELECT * FROM usuarios WHERE correo = ?`;
+        const sql1 = "SELECT * FROM usuarios WHERE correo = ?";
         const reg1 = await pool.query(sql1, correo);
         if(reg1[0].length > 0){
             return res.status(500).send("Error correo existente");
         }
 
         // Construir la consulta de inserción
-        const sql2 = `INSERT INTO usuarios SET ?`;
+        const sql2 = "INSERT INTO usuarios SET ?";
         const reg2 = await pool.query(sql2, usuarioNuevo);
 
         res.status(200).send(reg2);
@@ -147,7 +147,7 @@ const deleteUser = async function(req, res) {
         const id = req.params.id
 
         // Construir la consulta de eliminación
-        const sql = `DELETE FROM usuarios WHERE id = ?`;
+        const sql = "DELETE FROM usuarios WHERE id = ?";
         const reg = await pool.query(sql, [id]);
 
         res.status(200).send(reg);
@@ -159,30 +159,37 @@ const deleteUser = async function(req, res) {
 
 // Enviar email a usuario
 const sendEmail = async function(req, res) {
-    try { 
-        const from = 'emprendimiento2020g7h2@gmail.com'
-        
+    try {
+        const from = "emprendimiento2020g7h2@gmail.com"
+
         // Configura servicio del correo electronico
-        const transporter = nodemailer.createTransport({ 
-            service: 'gmail', // Servicio usado 
-            auth: { 
-                user: from, 
-                pass: process.env.APP_PASSWORD 
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true, // SSL
+            auth: {
+                user: from,
+                pass: process.env.APP_PASSWORD
             },
-            tls: { rejectUnauthorized: false } // Desactiva la verificación SSL
+            tls: { rejectUnauthorized: false },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000
         });
 
+        // Verificar conexión al servidor SMTP antes de enviar
+        await transporter.verify();
+
         const { to, subject, text } = req.body;
-        // Construir cuerpo del correo electronico
-        const mailOptions = { 
-            from: from, 
-            to: to, 
-            subject: subject, 
-            text: text 
+        const mailOptions = {
+            from: from,
+            to: to,
+            subject: subject,
+            text: text
         };
 
         // Consulta el correo electronico para verificar si existe
-        const sql = `SELECT * FROM usuarios WHERE correo = ?`;
+        const sql = "SELECT * FROM usuarios WHERE correo = ?";
         const reg = await pool.query(sql, to);
         if(isEmptyObject(reg)){
             return res.status(500).send("Error correo no encontrado");
@@ -191,30 +198,40 @@ const sendEmail = async function(req, res) {
         // Envia correo electronico
         const info = await transporter.sendMail(mailOptions);
 
-        res.status(200).send('Correo enviado con éxito a ' + info.accepted);
-    } catch (error) { 
+        res.status(200).send("Correo enviado con éxito a " + info.accepted);
+    } catch (error) {
         console.error("Error al enviar correo electronico: ", error);
-        res.status(500).send('Error del servidor');
+        if (error && error.code === "ETIMEDOUT") {
+            return res.status(502).send("Timeout al conectar con el servidor SMTP");
+        }
+        res.status(500).send("Error del servidor");
     }
 };
 
 // Enviar comentario a empresa
 const sendComment = async function(req, res){
     try { 
-        const from = 'emprendimiento2020g7h2@gmail.com'
+        const from = "emprendimiento2020g7h2@gmail.com"
         
         // Configura servicio del correo electronico
-        const transporter = nodemailer.createTransport({ 
-            service: 'gmail', // Servicio usado 
-            auth: { 
-                user: from, 
-                pass: process.env.APP_PASSWORD 
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true, // SSL
+            auth: {
+                user: from,
+                pass: process.env.APP_PASSWORD
             },
-            tls: { rejectUnauthorized: false } // Desactiva la verificación SSL
+            tls: { rejectUnauthorized: false },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000
         });
 
+        // Verificar conexión al servidor SMTP antes de enviar
+        await transporter.verify();
+
         const { subject, text } = req.body;
-        // Construir cuerpo del correo electronico
         const mailOptions = { 
             from: from, 
             to: from, 
@@ -225,10 +242,13 @@ const sendComment = async function(req, res){
         // Envia correo electronico
         const info = await transporter.sendMail(mailOptions);
 
-        res.status(200).send('Correo enviado con éxito a ' + info.accepted);
-    } catch (error) { 
+        res.status(200).send("Correo enviado con éxito a " + info.accepted);
+    } catch (error) {
         console.error("Error al enviar correo electronico: ", error);
-        res.status(500).send('Error del servidor');
+        if (error && error.code === "ETIMEDOUT") {
+            return res.status(502).send("Timeout al conectar con el servidor SMTP");
+        }
+        res.status(500).send("Error del servidor");
     }
 };
 
