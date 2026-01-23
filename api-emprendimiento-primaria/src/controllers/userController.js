@@ -167,7 +167,7 @@ const sendEmail = async function(req, res) {
             service: 'gmail', // Servicio usado 
             auth: { 
                 user: from, 
-                pass: 'xxyz xxyz xxyz xxyz' 
+                pass: process.env.APP_PASSWORD 
             },
             tls: { rejectUnauthorized: false } // Desactiva la verificación SSL
         });
@@ -208,7 +208,7 @@ const sendComment = async function(req, res){
             service: 'gmail', // Servicio usado 
             auth: { 
                 user: from, 
-                pass: 'xxyz xxyz xxyz xxyz' 
+                pass: process.env.APP_PASSWORD 
             },
             tls: { rejectUnauthorized: false } // Desactiva la verificación SSL
         });
