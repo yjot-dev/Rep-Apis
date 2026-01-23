@@ -98,7 +98,7 @@ const updateUser = async function(req, res){
     try {
         const id = req.params.id;
         // Desestructura clave y foto, y recoge el resto de los datos
-        let { clave, foto, ...resto } = req.body;
+        let { clave, ...resto } = req.body;
 
         // Consulta para obtener la clave del usuario
         const sql1 = `SELECT clave FROM usuarios WHERE id = ?`;
@@ -118,16 +118,10 @@ const updateUser = async function(req, res){
             clave = claveHash
         }
 
-        // Convertir una cadena Base64 a MediumBlob
-        if (foto) {
-            foto = Buffer.from(foto, 'base64');
-        }
-
         // Construir el objeto para actualizar
         const usuarioEditado = {
             ...resto,
-            clave: clave,
-            foto: foto
+            clave: clave
         };
 
         // Construir la consulta de actualización
