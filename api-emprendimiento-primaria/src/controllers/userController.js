@@ -162,23 +162,26 @@ const sendEmail = async function(req, res) {
     try {
         const from = "emprendimiento2020g7h2@gmail.com"
 
-        // Configura servicio del correo electronico
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: true, // SSL
+        // Detectar entorno
+        const isProduction = process.env.NODE_ENV === "production";
+    
+        // Configura servicio del correo electrónico
+        const transporterConfig = {
+            host: "smtp.elasticemail.com",
+            port: 2525,
+            secure: false, // TLS
             auth: {
-                user: from,
-                pass: process.env.APP_PASSWORD
-            },
-            tls: { rejectUnauthorized: false },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 10000
-        });
-
-        // Verificar conexión al servidor SMTP antes de enviar
-        await transporter.verify();
+                user: from, // Correo verificado
+                pass: process.env.APP_PASSWORD // API Key
+            }
+        };
+    
+        // En desarrollo, desactivar validación estricta de certificados
+        if (!isProduction) {
+            transporterConfig.tls = { rejectUnauthorized: false };
+        }
+    
+        const transporter = nodemailer.createTransport(transporterConfig);
 
         const { to, subject, text } = req.body;
         const mailOptions = {
@@ -188,19 +191,19 @@ const sendEmail = async function(req, res) {
             text: text
         };
 
-        // Consulta el correo electronico para verificar si existe
+        // Consulta el correo electrónico en BD
         const sql = "SELECT * FROM usuarios WHERE correo = ?";
         const reg = await pool.query(sql, to);
         if(isEmptyObject(reg)){
             return res.status(500).send("Error correo no encontrado");
         }
 
-        // Envia correo electronico
+        // Envia correo electrónico
         const info = await transporter.sendMail(mailOptions);
 
         res.status(200).send("Correo enviado con éxito a " + info.accepted);
     } catch (error) {
-        console.error("Error al enviar correo electronico: ", error);
+        console.error("Error al enviar correo electrónico: ", error);
         if (error && error.code === "ETIMEDOUT") {
             return res.status(502).send("Timeout al conectar con el servidor SMTP");
         }
@@ -212,29 +215,33 @@ const sendEmail = async function(req, res) {
 const sendComment = async function(req, res){
     try { 
         const from = "emprendimiento2020g7h2@gmail.com"
+        const to = "2010guabo@gmail.com"
         
-        // Configura servicio del correo electronico
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 465,
-            secure: true, // SSL
+        // Detectar entorno
+        const isProduction = process.env.NODE_ENV === "production";
+    
+        // Configura servicio del correo electrónico
+        const transporterConfig = {
+            host: "smtp.elasticemail.com",
+            port: 2525,
+            secure: false, // TLS
             auth: {
-                user: from,
-                pass: process.env.APP_PASSWORD
-            },
-            tls: { rejectUnauthorized: false },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 10000
-        });
-
-        // Verificar conexión al servidor SMTP antes de enviar
-        await transporter.verify();
+                user: from, // Correo verificado
+                pass: process.env.APP_PASSWORD // API Key
+            }
+        };
+    
+        // En desarrollo, desactivar validación estricta de certificados
+        if (!isProduction) {
+            transporterConfig.tls = { rejectUnauthorized: false };
+        }
+    
+        const transporter = nodemailer.createTransport(transporterConfig);
 
         const { subject, text } = req.body;
         const mailOptions = { 
             from: from, 
-            to: from, 
+            to: to, 
             subject: subject, 
             text: text 
         };
