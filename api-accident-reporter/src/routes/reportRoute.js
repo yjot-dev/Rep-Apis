@@ -1,8 +1,13 @@
-import { Router } from 'express';
+import { Router } from "express";
 const api = Router();
-import { seleccionar_reportes, insertar_reporte, actualizar_reporte, eliminar_reporte } from '../controllers/reportController.js';
+import {
+    seleccionar_reportes,
+    insertar_reporte,
+    actualizar_reporte,
+    eliminar_reporte
+} from "../controllers/reportController.js";
 
-const resourcePath = '/reports';
+const resourcePath = "/reports";
 
 api.get(resourcePath, seleccionar_reportes);
 api.post(resourcePath, insertar_reporte);

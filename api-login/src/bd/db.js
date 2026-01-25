@@ -1,7 +1,7 @@
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
+import mysql from "mysql2/promise";
+import dotenv from "dotenv";
 
-dotenv.config({ path: './src/bd/.env' });
+dotenv.config({ path: "./src/bd/.env" });
 
 const dataConexion = {
   host: process.env.MYSQL_HOST ?? process.env.MYSQLHOST,
@@ -15,19 +15,19 @@ const pool = mysql.createPool(dataConexion)
 
 try {
   const connection = await pool.getConnection();
-  console.log('Conexión exitosa');
+  console.log("Conexión exitosa");
   connection.release();
 } catch (err) {
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-      console.error('La conexión a la base de datos fue cerrada.');
+  if (err.code === "PROTOCOL_CONNECTION_LOST") {
+    console.error("La conexión a la base de datos fue cerrada.");
   }
-  if (err.code === 'ER_CON_COUNT_ERROR') {
-      console.error('La base de datos ha tenido demasiadas conexiones.');
+  if (err.code === "ER_CON_COUNT_ERROR") {
+    console.error("La base de datos ha tenido demasiadas conexiones.");
   }
-  if (err.code === 'ECONNREFUSED') {
-      console.error('La conexión a la base de datos fue rechazada.');
+  if (err.code === "ECONNREFUSED") {
+    console.error("La conexión a la base de datos fue rechazada.");
   } else {
-      console.error('Error al conectar a la base de datos:', err);
+    console.error("Error al conectar a la base de datos:", err);
   }
 }
 

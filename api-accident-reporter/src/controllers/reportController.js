@@ -6,7 +6,7 @@ function isEmptyObject(obj) {
 };
 
 // Seleccionar reporte
-const seleccionar_reportes = async function(_, res) {
+const seleccionar_reportes = async function (_, res) {
     try {
         // Consulta todos los reportes
         const sql1 = "SELECT * FROM reportes";
@@ -24,7 +24,7 @@ const seleccionar_reportes = async function(_, res) {
 };
 
 // Actualizar reporte
-const actualizar_reporte = async function(req, res) {
+const actualizar_reporte = async function (req, res) {
     try {
         const id = req.params.id;
         // Obtiene todos los datos
@@ -42,7 +42,7 @@ const actualizar_reporte = async function(req, res) {
 };
 
 // Insertar reporte
-const insertar_reporte = async function(req, res) {
+const insertar_reporte = async function (req, res) {
     try {
         // Obtiene todos los datos
         const usuarioNuevo = req.body;
@@ -59,8 +59,8 @@ const insertar_reporte = async function(req, res) {
 };
 
 // Eliminar reporte
-const eliminar_reporte = async function(req, res) {
-    try{
+const eliminar_reporte = async function (req, res) {
+    try {
         const id = req.params.id
 
         // Construir la consulta de eliminación

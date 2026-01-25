@@ -1,6 +1,5 @@
 import pool from "../bd/db.js";
 import bcrypt from "bcrypt";
-import nodemailer from "nodemailer";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
@@ -8,14 +7,14 @@ function isEmptyObject(obj) {
 };
 
 // Seleccionar usuario
-const findUser = async function(req, res) {
+const findUser = async function (req, res) {
     try {
         const { nombre, correo, clave } = req.body;
 
         // Consulta para obtener el usuario por nombre o correo
         const sql1 = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
         const reg1 = await pool.query(sql1, [correo, nombre]);
-        
+
         if (isEmptyObject(reg1)) {
             return res.status(404).send("Error usuario no encontrado");
         }
@@ -41,16 +40,16 @@ const findUser = async function(req, res) {
 };
 
 // Actualizar usuario
-const updateUser = async function(req, res) {
+const updateUser = async function (req, res) {
     try {
         const id = req.params.id;
         // Desestructura clave y foto, y recoge el resto de los datos
-        let { clave, foto, ...resto } = req.body; 
+        let { clave, foto, ...resto } = req.body;
 
         // Consulta para obtener la clave del usuario
         const sql1 = "SELECT clave FROM usuarios WHERE id = ?";
         const reg1 = await pool.query(sql1, [id]);
-        
+
         if (isEmptyObject(reg1)) {
             return res.status(500).send("Error clave no encontrada");
         }
@@ -61,12 +60,12 @@ const updateUser = async function(req, res) {
         const esLaClave = await bcrypt.compare(clave, claveHash);
         if (!esLaClave) {
             clave = await bcrypt.hash(clave, 10);
-        }else{
+        } else {
             clave = claveHash
         }
 
         // Convertir una cadena Base64 a MediumBlob
-        if (foto) { 
+        if (foto) {
             foto = Buffer.from(foto, "base64");
         }
 
@@ -89,7 +88,7 @@ const updateUser = async function(req, res) {
 };
 
 // Cambiar clave de usuario
-const changePasswordUser = async function(req, res) {
+const changePasswordUser = async function (req, res) {
     try {
         const { correo, clave } = req.body
 
@@ -101,14 +100,14 @@ const changePasswordUser = async function(req, res) {
         const reg = await pool.query(sql, [claveHash, correo]);
 
         res.status(200).send(reg);
-    } catch(error) {
+    } catch (error) {
         console.error("Error al cambiar clave de usuario: ", error);
         res.status(500).send("Error del servidor");
     }
 }
 
 // Insertar usuario
-const insertUser = async function(req, res) {
+const insertUser = async function (req, res) {
     try {
         // Desestructura clave y recoge el resto de los datos
         const { correo, clave, ...resto } = req.body;
@@ -126,7 +125,7 @@ const insertUser = async function(req, res) {
         // Consulta el correo electronico para verificar si existe
         const sql1 = "SELECT * FROM usuarios WHERE correo = ?";
         const reg1 = await pool.query(sql1, correo);
-        if(reg1[0].length > 0){
+        if (reg1[0].length > 0) {
             return res.status(500).send("Error correo existente");
         }
 
@@ -142,8 +141,8 @@ const insertUser = async function(req, res) {
 };
 
 // Eliminar usuario
-const deleteUser = async function(req, res) {
-    try{
+const deleteUser = async function (req, res) {
+    try {
         const id = req.params.id
 
         // Construir la consulta de eliminación
@@ -157,114 +156,10 @@ const deleteUser = async function(req, res) {
     }
 }
 
-// Enviar email a usuario
-const sendEmail = async function(req, res) {
-    try {
-        const from = "emprendimiento2020g7h2@gmail.com"
-
-        // Detectar entorno
-        const isProduction = process.env.NODE_ENV === "production";
-    
-        // Configura servicio del correo electrónico
-        const transporterConfig = {
-            host: "smtp.elasticemail.com",
-            port: 2525,
-            secure: false, // TLS
-            auth: {
-                user: from, // Correo verificado
-                pass: process.env.APP_PASSWORD // API Key
-            }
-        };
-    
-        // En desarrollo, desactivar validación estricta de certificados
-        if (!isProduction) {
-            transporterConfig.tls = { rejectUnauthorized: false };
-        }
-    
-        const transporter = nodemailer.createTransport(transporterConfig);
-
-        const { to, subject, text } = req.body;
-        const mailOptions = {
-            from: from,
-            to: to,
-            subject: subject,
-            text: text
-        };
-
-        // Consulta el correo electrónico en BD
-        const sql = "SELECT * FROM usuarios WHERE correo = ?";
-        const reg = await pool.query(sql, to);
-        if(isEmptyObject(reg)){
-            return res.status(500).send("Error correo no encontrado");
-        }
-
-        // Envia correo electrónico
-        const info = await transporter.sendMail(mailOptions);
-
-        res.status(200).send("Correo enviado con éxito a " + info.accepted);
-    } catch (error) {
-        console.error("Error al enviar correo electrónico: ", error);
-        if (error && error.code === "ETIMEDOUT") {
-            return res.status(502).send("Timeout al conectar con el servidor SMTP");
-        }
-        res.status(500).send("Error del servidor");
-    }
-};
-
-// Enviar comentario a empresa
-const sendComment = async function(req, res){
-    try { 
-        const from = "emprendimiento2020g7h2@gmail.com"
-        const to = "2010guabo@gmail.com"
-        
-        // Detectar entorno
-        const isProduction = process.env.NODE_ENV === "production";
-    
-        // Configura servicio del correo electrónico
-        const transporterConfig = {
-            host: "smtp.elasticemail.com",
-            port: 2525,
-            secure: false, // TLS
-            auth: {
-                user: from, // Correo verificado
-                pass: process.env.APP_PASSWORD // API Key
-            }
-        };
-    
-        // En desarrollo, desactivar validación estricta de certificados
-        if (!isProduction) {
-            transporterConfig.tls = { rejectUnauthorized: false };
-        }
-    
-        const transporter = nodemailer.createTransport(transporterConfig);
-
-        const { subject, text } = req.body;
-        const mailOptions = { 
-            from: from, 
-            to: to, 
-            subject: subject, 
-            text: text 
-        };
-
-        // Envia correo electronico
-        const info = await transporter.sendMail(mailOptions);
-
-        res.status(200).send("Correo enviado con éxito a " + info.accepted);
-    } catch (error) {
-        console.error("Error al enviar correo electronico: ", error);
-        if (error && error.code === "ETIMEDOUT") {
-            return res.status(502).send("Timeout al conectar con el servidor SMTP");
-        }
-        res.status(500).send("Error del servidor");
-    }
-};
-
 export {
     findUser,
     updateUser,
     changePasswordUser,
     insertUser,
-    deleteUser,
-    sendEmail,
-    sendComment
+    deleteUser
 };

@@ -1,7 +1,7 @@
-import express from 'express';
-import { api } from './src/routes/reportRoute.js';
-import { createServer } from 'https';
-import { readFileSync } from 'fs';
+import express from "express";
+import { api } from "./src/routes/reportRoute.js";
+import { createServer } from "https";
+import { readFileSync } from "fs";
 
 const app = express()
 
@@ -9,16 +9,16 @@ const app = express()
 const PORT = process.env.PORT || 3000;
 
 // Middlewares
-app.use(express.json({ limit: '20mb' }))
+app.use(express.json({ limit: "20mb" }))
 
 // Rutas
-app.use('/api', api)
-app.get('/', (_, res) => {
-  res.send('API funcionando 🚀');
+app.get("/", (_, res) => {
+  res.send("API funcionando 🚀");
 });
+app.use("/api", api)
 
 // Detectar entorno
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 
 if (isProduction) {
   // Remoto: solo HTTP, El servidor ya da HTTPS
@@ -28,8 +28,8 @@ if (isProduction) {
 } else {
   // Local: HTTPS con certificados autofirmados
   try {
-    const privateKey = readFileSync('./src/certificate/mykey.key');
-    const certificate = readFileSync('./src/certificate/mycert.crt');
+    const privateKey = readFileSync("./src/certificate/mykey.key");
+    const certificate = readFileSync("./src/certificate/mycert.crt");
     const credentials = { key: privateKey, cert: certificate };
 
     const httpsServer = createServer(credentials, app);
