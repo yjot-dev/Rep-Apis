@@ -1,6 +1,6 @@
 # API: Accident Reporter
 
-Resumen
+Descripción
 - API para gestionar reportes de accidentes (listar, crear, actualizar, eliminar).
 
 Tecnologías
@@ -57,8 +57,15 @@ npm run dev
 ```sh
 npm start
 ```
-El servidor arranca en el puerto definido por la variable `PORT` o por defecto en 443 (ver [server.js](api-accident-reporter/server.js)).
+El servidor usa PORT o 3000 por defecto; en producción respeta process.env.PORT.
+
+Comprobaciones útiles
+- Verificar que .env no esté versionado (.gitignore).
+- Si un archivo ya fue commiteado, dejar de rastrearlo:
+```bash
+git rm -r --cached ruta/al/archivo
+git commit -m "Stop tracking ignored files"
+```
 
 Notas
-- La conexión a MySQL se gestiona en [src/bd/db.js](api-accident-reporter/src/bd/db.js) y usa top-level await; requiere una versión de Node que lo soporte.
-- Asegurar permisos y rutas correctas para los certificados TLS y el archivo .env.
+- Asegurar versión de Node compatible con ESM.

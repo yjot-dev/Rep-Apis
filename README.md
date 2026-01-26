@@ -1,64 +1,68 @@
-# Colección de APIs
+# Monorepo: Apis
 
-Breve descripción
-- **Descripción:** Repositorio que agrupa tres APIs independientes basadas en Node.js/Express y MySQL, cada una con su propio servidor HTTPS local y certificados en `src/certificate/`.
+Descripción
+- Contiene 3 APIs independientes:
+  - api-login — autenticación, usuarios y envío de correos via Gmail API (OAuth2).
+  - api-emprendimiento-primaria — gestión de usuarios y envío de correos/feedback via Gmail API (OAuth2).
+  - api-accident-reporter — gestión de reportes (listar, crear, actualizar, eliminar).
 
-APIs incluidas
-- **api-accident-reporter:** [api-accident-reporter](api-accident-reporter/README.md)
-- **api-emprendimiento-primaria:** [api-emprendimiento-primaria](api-emprendimiento-primaria/README.md)
-- **api-login:** [api-login](api-login/README.md)
-
-Estructura general
-- **Carpetas:** Cada API tiene su propia carpeta de proyecto con `server.js`, `package.json`, y `src/`.
-- **src/** Contiene subcarpetas comunes como `bd/` (conexión MySQL), `controllers/`, `routes/` y `certificate/` (certificados TLS locales).
+Estructura
+- api-login/
+- api-emprendimiento-primaria/
+- api-accident-reporter/
 
 Tecnologías comunes
-- **Lenguaje:** Node.js (ESM)
-- **Framework:** Express
-- **Base de datos:** MySQL (mysql2)
-- **Autenticación y seguridad:** bcrypt, HTTPS nativo (certificados en `src/certificate/`)
-- **Correo:** nodemailer
-- **Configuración:** dotenv
-- **Desarrollo:** nodemon (dev)
+- Node.js (ESM)
+- Express
+- MySQL (mysql2)
+- dotenv
+- nodemon (dev)
+- HTTPS local con certificados autofirmados (en desarrollo cada API lee src/certificate/mykey.key y mycert.crt)
+- googleapis (solo en los proyectos que usan Gmail OAuth)
+- bcrypt (hash de contraseñas en proyectos que manejan usuarios)
 
-Instrucciones generales de instalación y ejecución
-- **Paso 1 — Instalar dependencias:** Para cada API, entrar en su carpeta e instalar:
+Dependencias (por proyecto)
+- api-login: express, mysql2, dotenv, googleapis, bcrypt
+- api-emprendimiento-primaria: express, mysql2, dotenv, googleapis, bcrypt
+- api-accident-reporter: express, mysql2, dotenv
 
+Variables de entorno (ejemplos)
+- MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
+- NODE_ENV (development | production)
+- PORT (opcional)
+- (Google OAuth) CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN
+> Mantener .env y secretos fuera del repositorio (.gitignore)
+
+Instalación y ejecución (por cada API)
+1. Entrar al directorio de la API:
+   - cd api-login
+   - cd api-emprendimiento-primaria
+   - cd api-accident-reporter
+2. Instalar dependencias:
 ```bash
-cd api-<nombre>
 npm install
 ```
-
-- **Paso 2 — Configurar variables:** Crear un archivo `.env` en la raíz de la API con las variables necesarias (ejemplo mínimo):
-
-```text
-MYSQL_HOST=
-MYSQL_PORT=
-MYSQL_USER=
-MYSQL_PASSWORD=
-MYSQL_DATABASE=
-PORT=443
-SMTP_HOST=
-SMTP_PORT=
-SMTP_USER=
-SMTP_PASS=
-```
-
-- **Paso 3 — Certificados TLS locales:** Colocar los archivos `mykey.key` y `mycert.crt` dentro de `src/certificate/` de cada API si se usa HTTPS local.
-
-- **Paso 4 — Ejecutar en desarrollo:**
-
+3. Configurar .env en `src/bd/.env` (o en la raíz del proyecto) y colocar certificados en `src/certificate/` si usa HTTPS local.
+4. Ejecutar:
+- Desarrollo (con recarga automática, HTTPS local si hay certificados):
 ```bash
 npm run dev
 ```
-
-- **Paso 5 — Ejecutar en producción:**
-
+- Producción:
 ```bash
 npm start
 ```
+Por defecto usan PORT=3000 si no se define.
 
-Notas y recomendaciones
-- **Puerto por defecto:** Si no se define `PORT` en `.env`, las APIs suelen usar 443 por defecto.
-- **Node:** Usar una versión de Node compatible con ESM (Node 14+; se recomienda LTS actual).
-- **Seguridad:** No subir `.env` ni certificados al control de versiones.
+Notas rápidas
+- En desarrollo las apps intentan arrancar HTTPS leyendo `src/certificate/mykey.key` y `src/certificate/mycert.crt`; si no quieres HTTPS, exporta NODE_ENV=production (o ajusta server.js).
+- Si un archivo ya fue versionado antes de agregarse a .gitignore, dejar de rastrearlo:
+```bash
+git rm -r --cached ruta/al/archivo
+git commit -m "Stop tracking ignored files"
+```
+- Verifica reglas de .gitignore con:
+```bash
+git check-ignore -v ruta/al/archivo
+git ls-files --others --exclude-standard
+```
