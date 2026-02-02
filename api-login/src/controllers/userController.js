@@ -27,11 +27,6 @@ const findUser = async function (req, res) {
             return res.status(401).send("Error clave incorrecta");
         }
 
-        // Convertir el campo foto (MediumBlob) a una cadena Base64
-        if (usuario.foto) {
-            usuario.foto = Buffer.from(usuario.foto).toString("base64");
-        }
-
         res.status(200).send(usuario);
     } catch (error) {
         console.error("Error al seleccionar usuario: ", error);
@@ -96,7 +91,7 @@ const insertUser = async function (req, res) {
 const updateUser = async function (req, res) {
     try {
         const id = req.params.id;
-        // Desestructura clave y foto, y recoge el resto de los datos
+        // Desestructura clave y recoge el resto de los datos
         let { clave, ...resto } = req.body;
 
         // Consulta para obtener la clave del usuario
