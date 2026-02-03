@@ -9,11 +9,11 @@ function isEmptyObject(obj) {
 //Encontrar y obtener usuario por nombre o correo y clave
 const findUser = async function (req, res) {
     try {
-        const { nombre, correo, clave } = req.body;
+        const { nombre, clave } = req.body;
 
         // Consulta para obtener el usuario por nombre o correo
         const sql1 = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
-        const reg1 = await pool.query(sql1, [correo, nombre]);
+        const reg1 = await pool.query(sql1, [nombre, nombre]);
 
         if (isEmptyObject(reg1)) {
             return res.status(404).send("Error usuario no encontrado");

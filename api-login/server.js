@@ -12,9 +12,9 @@ const app = express();
 const PORT = process.env.PORT;
 
 // Middlewares
-app.use(compression());
-app.use(cors());
-app.use(express.json({ limit: "20mb" }));
+app.use(compression()); // Descompresión automática y compresión de respuestas
+app.use(cors()); // Habilitar CORS para todas las rutas
+app.use(express.json({ limit: "20mb" })); // Parsear JSON con límite de 20MB
 
 // Rutas
 app.get("/", (_, res) => {
