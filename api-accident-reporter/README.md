@@ -3,12 +3,14 @@
 Descripción
 - API para gestionar reportes de accidentes (listar, crear, actualizar, eliminar).
 
-Tecnologías
+Tecnologías y dependencias
 - Node.js (ESM)
 - Express
 - MySQL (mysql2)
 - HTTPS (certificados locales)
 - dotenv
+- compression (gzip)
+- nodemon (dev)
 
 Archivos relevantes
 - [api-accident-reporter/server.js](api-accident-reporter/server.js)
@@ -27,13 +29,6 @@ Endpoints
 - POST /api/reports → [`insertar_reporte`](api-accident-reporter/src/controllers/reportController.js)
 - PUT /api/reports/:id → [`actualizar_reporte`](api-accident-reporter/src/controllers/reportController.js)
 - DELETE /api/reports/:id → [`eliminar_reporte`](api-accident-reporter/src/controllers/reportController.js)
-
-Dependencias (ver [package.json](api-accident-reporter/package.json))
-- express
-- mysql2
-- dotenv
-- https (uso de API nativa)
-- nodemon (dev)
 
 Instalación
 ```sh

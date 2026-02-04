@@ -16,15 +16,16 @@ Tecnologías comunes
 - Express
 - MySQL (mysql2)
 - dotenv
+- compression (gzip)
 - nodemon (dev)
 - HTTPS local con certificados autofirmados (en desarrollo cada API lee src/certificate/mykey.key y mycert.crt)
 - googleapis (solo en los proyectos que usan Gmail OAuth)
 - bcrypt (hash de contraseñas en proyectos que manejan usuarios)
 
 Dependencias (por proyecto)
-- api-login: express, mysql2, dotenv, googleapis, bcrypt
-- api-emprendimiento-primaria: express, mysql2, dotenv, googleapis, bcrypt
-- api-accident-reporter: express, mysql2, dotenv
+- api-login: express, mysql2, dotenv, compression, googleapis, bcrypt
+- api-emprendimiento-primaria: express, mysql2, dotenv, compression, googleapis, bcrypt
+- api-accident-reporter: express, mysql2, dotenv, compression
 
 Variables de entorno (ejemplos)
 - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE

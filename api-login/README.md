@@ -4,23 +4,16 @@ Descripción
 - API REST para gestión de usuarios y autenticación, además de envío de correos vía Gmail API (OAuth2).
 - Rutas principales: usuarios (/api/users) y OAuth/email (/api/oauth).
 
-Tecnologías
+Tecnologías y dependencias
 - Node.js (ESM)
 - Express
 - MySQL (mysql2)
 - Google APIs (googleapis) — envío de correo via Gmail API
 - bcrypt — hashing de contraseñas
 - dotenv — variables de entorno
+- compression (gzip)
 - HTTPS local con certificados autofirmados
 - nodemon (desarrollo)
-
-Dependencias (package.json)
-- bcrypt
-- dotenv
-- express
-- googleapis
-- mysql2
-- nodemon (dev)
 
 Estructura relevante
 - server.js — arranque del servidor (HTTPS en desarrollo, HTTP en producción)

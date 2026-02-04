@@ -8,10 +8,14 @@
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
+  "engines": {
+    "node": ">=18.12.1"
+  },
   "keywords": [],
   "author": "YJOT-DEV",
   "license": "ISC",
   "dependencies": {
+    "compression": "^1.8.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mysql2": "^3.14.0"

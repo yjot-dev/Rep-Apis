@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "compression";
 import { api } from "./src/routes/reportRoute.js";
 import { createServer } from "https";
 import { readFileSync } from "fs";
@@ -6,10 +7,11 @@ import { readFileSync } from "fs";
 const app = express()
 
 // Configurar puerto dinámico
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 // Middlewares
-app.use(express.json({ limit: "20mb" }))
+app.use(compression()); // Compresión de respuestas
+app.use(express.json({ limit: "20mb" })); // Parsear JSON con límite de 20MB
 
 // Rutas
 app.get("/", (_, res) => {

@@ -1,6 +1,5 @@
 import express from "express";
 import compression from "compression";
-import cors from "cors";
 import { api1 } from "./src/routes/userRoute.js";
 import { api2 } from "./src/routes/oauthRoute.js";
 import { createServer } from "https";
@@ -12,8 +11,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 // Middlewares
-app.use(compression()); // Descompresión automática y compresión de respuestas
-app.use(cors()); // Habilitar CORS para todas las rutas
+app.use(compression()); // Compresión de respuestas
 app.use(express.json({ limit: "20mb" })); // Parsear JSON con límite de 20MB
 
 // Rutas

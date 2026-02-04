@@ -12,8 +12,8 @@ Tecnologías y dependencias
 - googleapis (Gmail API / OAuth2)
 - bcrypt (hash de contraseñas)
 - dotenv (variables de entorno)
+- compression (gzip)
 - nodemon (dev)
-- Dependencias (package.json): bcrypt, dotenv, express, googleapis, mysql2. Dev: nodemon.
 
 Estructura relevante
 - server.js — arranque del servidor (HTTPS en dev, HTTP en prod)

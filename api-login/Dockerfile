@@ -1,0 +1,20 @@
+# Imagen base oficial de Node.js
+FROM node:18-alpine
+
+# Crear directorio de trabajo dentro del contenedor
+WORKDIR /app/api-login
+
+# Copiar package.json y package-lock.json primero
+COPY api-login/package*.json ./
+
+# Instalar dependencias
+RUN npm install --production
+
+# Copiar el resto del código
+COPY api-login .
+
+# Exponer el puerto
+EXPOSE 3000
+
+# Comando de inicio
+CMD ["npm", "start"]
