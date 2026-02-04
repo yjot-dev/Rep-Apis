@@ -2,16 +2,16 @@
 FROM node:18-alpine
 
 # Crear directorio de trabajo dentro del contenedor
-WORKDIR /app/api-login
+WORKDIR /app
 
 # Copiar package.json y package-lock.json primero
-COPY api-login/package*.json ./
+COPY package*.json ./
 
 # Instalar dependencias
 RUN npm install --production
 
 # Copiar el resto del código
-COPY api-login .
+COPY . .
 
 # Exponer el puerto
 EXPOSE 3000

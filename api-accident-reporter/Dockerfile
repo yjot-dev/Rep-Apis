@@ -2,16 +2,16 @@
 FROM node:18-alpine
 
 # Crear directorio de trabajo dentro del contenedor
-WORKDIR /app/api-accident-reporter
+WORKDIR /app
 
 # Copiar package.json y package-lock.json primero
-COPY api-accident-reporter/package*.json ./
+COPY package*.json ./
 
 # Instalar dependencias
 RUN npm install --production
 
 # Copiar el resto del código
-COPY api-accident-reporter .
+COPY . .
 
 # Exponer el puerto
 EXPOSE 3000
