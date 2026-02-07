@@ -9,17 +9,19 @@ function isEmptyObject(obj) {
 // Seleccionar usuario
 const findUser = async function (req, res) {
     try {
-        const { nombre, correo, clave } = req.body;
+        const { nombre, clave } = req.body;
+        console.log("Entrada:", req.body);
 
         // Consulta para obtener el usuario por nombre o correo
-        const sql1 = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
-        const reg1 = await pool.query(sql1, [correo, nombre]);
+        const sql = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
+        const [rows] = await pool.query(sql, [nombre, nombre]);
+        console.log("Salida:", rows);
 
-        if (isEmptyObject(reg1)) {
+        if (isEmptyObject(rows)) {
             return res.status(404).send("Error usuario no encontrado");
         }
 
-        const usuario = (reg1[0])[0];
+        const usuario = rows[0];
 
         // Comparar la clave ingresada con la clave encriptada almacenada
         const esLaClave = await bcrypt.compare(clave, usuario.clave);

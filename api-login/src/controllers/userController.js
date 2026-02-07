@@ -6,15 +6,16 @@ function isEmptyObject(obj) {
     return !Object.keys(obj) || Object.keys(obj).length === 0;
 }
 
-//Encontrar y obtener usuario por nombre o correo y clave
+// Seleccionar usuario
 const findUser = async function (req, res) {
     try {
         const { nombre, clave } = req.body;
+        console.log("Entrada:", req.body);
 
         // Consulta para obtener el usuario por nombre o correo
         const sql = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
         const [rows] = await pool.query(sql, [nombre, nombre]);
-        console.log("Resultado consulta:", rows);
+        console.log("Salida:", rows);
         
         if (isEmptyObject(rows)) {
             return res.status(404).send("Error usuario no encontrado");

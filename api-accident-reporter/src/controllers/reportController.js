@@ -10,9 +10,10 @@ const seleccionar_reportes = async function (_, res) {
     try {
         // Consulta todos los reportes
         const sql1 = "SELECT * FROM reportes";
-        const reg1 = await pool.query(sql1);
+        const [rows] = await pool.query(sql1);
+        console.log("Salida:", rows);
 
-        if (isEmptyObject(reg1)) {
+        if (isEmptyObject(rows)) {
             return res.status(500).send("Error no hay reportes");
         }
 
