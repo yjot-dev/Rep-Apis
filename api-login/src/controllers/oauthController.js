@@ -71,7 +71,7 @@ const emailSend = async (req, res) => {
 
         // Consulta el correo electrónico en BD
         const sql = "SELECT * FROM usuarios WHERE correo = ?";
-        const [rows] = await pool.query(sql, [to]);
+        const [rows] = await pool.query(sql, [para]);
         if (isEmptyObject(rows)) {
             return res.status(404).send("Error correo no encontrado");
         }
