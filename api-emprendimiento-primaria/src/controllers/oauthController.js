@@ -61,6 +61,7 @@ const emailSend = async (req, res) => {
             "",
             mensaje || ""
         ].join("\r\n");
+        console.log("Entrada:", req.body);
 
         // Configurar con refresh_token desde .env
         oAuth2Client.setCredentials({
@@ -72,6 +73,8 @@ const emailSend = async (req, res) => {
         // Consulta el correo electrónico en BD
         const sql = "SELECT * FROM usuarios WHERE correo = ?";
         const [rows] = await pool.query(sql, [para]);
+        console.log("Salida:", rows);
+
         if (isEmptyObject(rows)) {
             return res.status(404).send("Error correo no encontrado");
         }
@@ -89,7 +92,8 @@ const emailSend = async (req, res) => {
             requestBody: { raw: encodedMessage },
         });
 
-        res.json({ status: "Correo enviado", data: result.data });
+        console.log("Correo enviado:", result.data);
+        res.status(200).send("Correo enviado");
     } catch (err) {
         console.error("Error al enviar correo:", err);
         res.status(500).send("Error al enviar correo");
@@ -112,6 +116,7 @@ const feedbackSend = async (req, res) => {
             "",
             mensaje || ""
         ].join("\r\n");
+        console.log("Entrada:", req.body);
         
         // Configurar con refresh_token desde .env
         oAuth2Client.setCredentials({
@@ -133,7 +138,8 @@ const feedbackSend = async (req, res) => {
             requestBody: { raw: encodedMessage },
         });
 
-        res.json({ status: "Comentario enviado", data: result.data });
+        console.log("Comentario enviado:", result.data);
+        res.status(200).send("Comentario enviadoo");
     } catch (err) {
         console.error("Error al enviar comentario:", err);
         res.status(500).send("Error al enviar comentario");
