@@ -48,26 +48,26 @@ const googleCallback = async (req, res) => {
 // 3. Enviar correo usando Gmail API
 const emailSend = async (req, res) => {
     try {
+        // Construir mensaje MIME
+        const { para, asunto, mensaje } = req.body;
+        const de = "emprendimiento2020g7h2@gmail.com";
+        const message = [
+            `From: ${de}`,
+            `To: ${para}`,
+            `Subject: ${encodeRFC2047(asunto)}`,
+            "MIME-Version: 1.0",
+            "Content-Type: text/plain; charset=\"UTF-8\"",
+            "Content-Transfer-Encoding: 7bit",
+            "",
+            mensaje || ""
+        ].join("\r\n");
+
         // Configurar con refresh_token desde .env
         oAuth2Client.setCredentials({
             refresh_token: process.env.REFRESH_TOKEN,
         });
 
         const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
-
-        // Construir mensaje MIME
-        const { to, subject, text } = req.body;
-        const from = "emprendimiento2020g7h2@gmail.com";
-        const message = [
-            `From: ${from}`,
-            `To: ${to}`,
-            `Subject: ${encodeRFC2047(subject)}`,
-            "MIME-Version: 1.0",
-            "Content-Type: text/plain; charset=\"UTF-8\"",
-            "Content-Transfer-Encoding: 7bit",
-            "",
-            text || ""
-        ].join("\r\n");
 
         // Consulta el correo electrónico en BD
         const sql = "SELECT * FROM usuarios WHERE correo = ?";
