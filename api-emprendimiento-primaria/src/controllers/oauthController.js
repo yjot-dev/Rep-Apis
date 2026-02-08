@@ -1,5 +1,5 @@
-import { google } from "googleapis";
 import pool from "../bd/db.js";
+import { google } from "googleapis";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
@@ -73,7 +73,7 @@ const emailSend = async (req, res) => {
         const sql = "SELECT * FROM usuarios WHERE correo = ?";
         const [rows] = await pool.query(sql, [to]);
         if (isEmptyObject(rows)) {
-            return res.status(500).send("Error correo no encontrado");
+            return res.status(404).send("Error correo no encontrado");
         }
 
         // Codificar en Base64URL

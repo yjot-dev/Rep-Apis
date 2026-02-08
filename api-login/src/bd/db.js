@@ -6,31 +6,13 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 const dataConexion = {
-  host: process.env.MYSQL_HOST ?? process.env.MYSQLHOST,
-  port: process.env.MYSQL_PORT ?? process.env.MYSQLPORT,
-  user: process.env.MYSQL_USER ?? process.env.MYSQLUSER,
-  password: process.env.MYSQL_PASSWORD ?? process.env.MYSQLPASSWORD,
-  database: process.env.MYSQL_DATABASE ?? process.env.MYSQLDATABASE,
+  host: process.env.MYSQLHOST,
+  port: process.env.MYSQLPORT,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
 };
 
 const pool = mysql.createPool(dataConexion)
-
-try {
-  const connection = await pool.getConnection();
-  console.log("Conexión exitosa");
-  connection.release();
-} catch (err) {
-  if (err.code === "PROTOCOL_CONNECTION_LOST") {
-    console.error("La conexión a la base de datos fue cerrada.");
-  }
-  if (err.code === "ER_CON_COUNT_ERROR") {
-    console.error("La base de datos ha tenido demasiadas conexiones.");
-  }
-  if (err.code === "ECONNREFUSED") {
-    console.error("La conexión a la base de datos fue rechazada.");
-  } else {
-    console.error("Error al conectar a la base de datos:", err);
-  }
-}
 
 export default pool;

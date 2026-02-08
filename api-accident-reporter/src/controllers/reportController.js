@@ -14,10 +14,10 @@ const seleccionar_reportes = async function (_, res) {
         console.log("Salida:", rows);
 
         if (isEmptyObject(rows)) {
-            return res.status(500).send("Error no hay reportes");
+            return res.status(404).send("Error no hay reportes");
         }
 
-        res.status(200).send(reg1[0]);
+        res.status(200).send(rows[0]);
     } catch (error) {
         console.error("Error al consultar reportes: ", error);
         res.status(500).send("Error del servidor");
@@ -33,7 +33,12 @@ const actualizar_reporte = async function (req, res) {
 
         // Construir la consulta de actualización
         const sql = "UPDATE reportes SET ? WHERE id = ?";
-        const reg = await pool.query(sql, [usuarioEditado, id]);
+        const [reg] = await pool.query(sql, [usuarioEditado, id]);
+
+        // Verificar si se actualizó alguna fila
+        if (reg.affectedRows === 0) {
+            return res.status(404).send("Error reporte no encontrado");
+        }
 
         res.status(200).send(reg);
     } catch (error) {
@@ -52,7 +57,7 @@ const insertar_reporte = async function (req, res) {
         const sql = "INSERT INTO reportes SET ?";
         const reg = await pool.query(sql, usuarioNuevo);
 
-        res.status(200).send(reg);
+        res.status(201).send(reg);
     } catch (error) {
         console.error("Error al insertar reporte: ", error);
         res.status(500).send("Error del servidor");
@@ -66,7 +71,12 @@ const eliminar_reporte = async function (req, res) {
 
         // Construir la consulta de eliminación
         const sql = "DELETE FROM reportes WHERE id = ?";
-        const reg = await pool.query(sql, [id]);
+        const [reg] = await pool.query(sql, [id]);
+
+        // Verificar si se actualizó alguna fila
+        if (reg.affectedRows === 0) {
+            return res.status(404).send("Error reporte no encontrado");
+        }
 
         res.status(200).send(reg);
     } catch (error) {

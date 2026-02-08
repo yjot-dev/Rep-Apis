@@ -53,7 +53,7 @@ const updateUser = async function (req, res) {
         const [rows] = await pool.query(sql1, [id]);
 
         if (isEmptyObject(rows)) {
-            return res.status(500).send("Error clave no encontrada");
+            return res.status(404).send("Error clave no encontrada");
         }
 
         const claveHash = rows[0].clave;
@@ -99,7 +99,12 @@ const changePasswordUser = async function (req, res) {
 
         // Construir la consulta de cambio de clave
         const sql = "UPDATE usuarios SET clave = ? WHERE correo = ?";
-        const reg = await pool.query(sql, [claveHash, correo]);
+        const [reg] = await pool.query(sql, [claveHash, correo]);
+
+        // Verificar si se actualizó alguna fila
+        if (reg.affectedRows === 0) {
+            return res.status(404).send("Error correo no encontrado");
+        }
 
         res.status(200).send(reg);
     } catch (error) {
@@ -128,14 +133,14 @@ const insertUser = async function (req, res) {
         const sql1 = "SELECT * FROM usuarios WHERE correo = ?";
         const [rows] = await pool.query(sql1, [correo]);
         if (rows.length > 0) {
-            return res.status(500).send("Error correo existente");
+            return res.status(409).send("Error correo existente");
         }
 
         // Construir la consulta de inserción
         const sql2 = "INSERT INTO usuarios SET ?";
         const reg = await pool.query(sql2, usuarioNuevo);
 
-        res.status(200).send(reg);
+        res.status(201).send(reg);
     } catch (error) {
         console.error("Error al insertar usuario: ", error);
         res.status(500).send("Error del servidor");
@@ -149,7 +154,12 @@ const deleteUser = async function (req, res) {
 
         // Construir la consulta de eliminación
         const sql = "DELETE FROM usuarios WHERE id = ?";
-        const reg = await pool.query(sql, [id]);
+        const [reg] = await pool.query(sql, [id]);
+
+        // Verificar si se actualizó alguna fila
+        if (reg.affectedRows === 0) {
+            return res.status(404).send("Error usuario no encontrado");
+        }
 
         res.status(200).send(reg);
     } catch (error) {

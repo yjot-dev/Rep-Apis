@@ -1,3 +1,4 @@
+import pool from "./src/bd/db.js";
 import express from "express";
 import compression from "compression";
 import { api1 } from "./src/routes/userRoute.js";
@@ -21,7 +22,26 @@ app.get("/", (_, res) => {
 app.use("/api", api1);
 app.use("/api", api2);
 
-// Detectar entorno
+// Verificar conexión a la base de datos al iniciar el servidor
+try {
+  const connection = await pool.getConnection();
+  console.log("Conexión a BD exitosa");
+  connection.release();
+} catch (err) {
+  if (err.code === "PROTOCOL_CONNECTION_LOST") {
+    console.error("La conexión a la base de datos fue cerrada.");
+  }
+  if (err.code === "ER_CON_COUNT_ERROR") {
+    console.error("La base de datos ha tenido demasiadas conexiones.");
+  }
+  if (err.code === "ECONNREFUSED") {
+    console.error("La conexión a la base de datos fue rechazada.");
+  } else {
+    console.error("Error al conectar a la base de datos:", err);
+  }
+}
+
+// Detectar entorno al iniciar el servidor
 const isProduction = process.env.NODE_ENV === "production";
 
 if (isProduction) {
