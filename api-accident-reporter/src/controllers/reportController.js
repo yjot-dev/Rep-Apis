@@ -2,7 +2,7 @@ import pool from "../bd/db.js";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
-    return !Object.keys(obj).length;
+    return !Object.keys(obj) || Object.keys(obj).length === 0;
 };
 
 // Seleccionar reporte
@@ -32,10 +32,10 @@ const actualizar_reporte = async function (req, res) {
         const usuarioEditado = req.body;
 
         // Construir la consulta de actualización
-        const sql1 = "UPDATE reportes SET ? WHERE id = ?";
-        const reg1 = await pool.query(sql1, [usuarioEditado, id]);
+        const sql = "UPDATE reportes SET ? WHERE id = ?";
+        const reg = await pool.query(sql, [usuarioEditado, id]);
 
-        res.status(200).send(reg1);
+        res.status(200).send(reg);
     } catch (error) {
         console.error("Error al actualizar reporte: ", error);
         res.status(500).send("Error del servidor");
@@ -49,10 +49,10 @@ const insertar_reporte = async function (req, res) {
         const usuarioNuevo = req.body;
 
         // Construir la consulta de inserción
-        const sql1 = "INSERT INTO reportes SET ?";
-        const reg1 = await pool.query(sql1, usuarioNuevo);
+        const sql = "INSERT INTO reportes SET ?";
+        const reg = await pool.query(sql, usuarioNuevo);
 
-        res.status(200).send(reg1);
+        res.status(200).send(reg);
     } catch (error) {
         console.error("Error al insertar reporte: ", error);
         res.status(500).send("Error del servidor");
@@ -66,7 +66,7 @@ const eliminar_reporte = async function (req, res) {
 
         // Construir la consulta de eliminación
         const sql = "DELETE FROM reportes WHERE id = ?";
-        const reg = await pool.query(sql, id);
+        const reg = await pool.query(sql, [id]);
 
         res.status(200).send(reg);
     } catch (error) {

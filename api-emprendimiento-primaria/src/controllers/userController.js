@@ -50,13 +50,13 @@ const updateUser = async function (req, res) {
 
         // Consulta para obtener la clave del usuario
         const sql1 = "SELECT clave FROM usuarios WHERE id = ?";
-        const reg1 = await pool.query(sql1, [id]);
+        const [rows] = await pool.query(sql1, [id]);
 
-        if (isEmptyObject(reg1)) {
+        if (isEmptyObject(rows)) {
             return res.status(500).send("Error clave no encontrada");
         }
 
-        const claveHash = (reg1[0])[0].clave;
+        const claveHash = rows[0].clave;
 
         // Comparar la clave ingresada con la clave hash almacenada
         const esLaClave = await bcrypt.compare(clave, claveHash);
@@ -80,9 +80,9 @@ const updateUser = async function (req, res) {
 
         // Construir la consulta de actualización
         const sql2 = "UPDATE usuarios SET ? WHERE id = ?";
-        const reg2 = await pool.query(sql2, [usuarioEditado, id]);
+        const reg = await pool.query(sql2, [usuarioEditado, id]);
 
-        res.status(200).send(reg2);
+        res.status(200).send(reg);
     } catch (error) {
         console.error("Error al actualizar usuario: ", error);
         res.status(500).send("Error del servidor");
@@ -126,16 +126,16 @@ const insertUser = async function (req, res) {
 
         // Consulta el correo electronico para verificar si existe
         const sql1 = "SELECT * FROM usuarios WHERE correo = ?";
-        const reg1 = await pool.query(sql1, correo);
-        if (reg1[0].length > 0) {
+        const [rows] = await pool.query(sql1, [correo]);
+        if (rows.length > 0) {
             return res.status(500).send("Error correo existente");
         }
 
         // Construir la consulta de inserción
         const sql2 = "INSERT INTO usuarios SET ?";
-        const reg2 = await pool.query(sql2, usuarioNuevo);
+        const reg = await pool.query(sql2, usuarioNuevo);
 
-        res.status(200).send(reg2);
+        res.status(200).send(reg);
     } catch (error) {
         console.error("Error al insertar usuario: ", error);
         res.status(500).send("Error del servidor");
