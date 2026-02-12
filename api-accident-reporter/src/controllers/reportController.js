@@ -17,7 +17,7 @@ const seleccionar_reportes = async function (_, res) {
             return res.status(404).send("Error no hay reportes");
         }
 
-        res.status(200).send(rows[0]);
+        res.status(200).send(rows);
     } catch (error) {
         console.error("Error al consultar reportes: ", error);
         res.status(500).send("Error del servidor");
@@ -55,7 +55,7 @@ const insertar_reporte = async function (req, res) {
 
         // Construir la consulta de inserción
         const sql = "INSERT INTO reportes SET ?";
-        const reg = await pool.query(sql, usuarioNuevo);
+        const [reg] = await pool.query(sql, usuarioNuevo);
 
         res.status(201).send(reg);
     } catch (error) {

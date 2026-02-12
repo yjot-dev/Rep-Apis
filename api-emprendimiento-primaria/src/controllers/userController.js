@@ -80,7 +80,7 @@ const updateUser = async function (req, res) {
 
         // Construir la consulta de actualización
         const sql2 = "UPDATE usuarios SET ? WHERE id = ?";
-        const reg = await pool.query(sql2, [usuarioEditado, id]);
+        const [reg] = await pool.query(sql2, [usuarioEditado, id]);
 
         res.status(200).send(reg);
     } catch (error) {
@@ -138,7 +138,7 @@ const insertUser = async function (req, res) {
 
         // Construir la consulta de inserción
         const sql2 = "INSERT INTO usuarios SET ?";
-        const reg = await pool.query(sql2, usuarioNuevo);
+        const [reg] = await pool.query(sql2, usuarioNuevo);
 
         res.status(201).send(reg);
     } catch (error) {
