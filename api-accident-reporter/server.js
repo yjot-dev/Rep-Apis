@@ -1,7 +1,8 @@
 import pool from "./src/bd/db.js";
 import express from "express";
 import compression from "compression";
-import { api } from "./src/routes/reportRoute.js";
+import { api1 } from "./src/routes/geocodingRoute.js";
+import { api2 } from "./src/routes/reportRoute.js";
 import { createServer } from "https";
 import { readFileSync } from "fs";
 
@@ -18,7 +19,8 @@ app.use(express.json({ limit: "20mb" })); // Parsear JSON con límite de 20MB
 app.get("/", (_, res) => {
   res.send("API funcionando 🚀");
 });
-app.use("/api", api)
+app.use("/api", api1);
+app.use("/api", api2);
 
 // Verificar conexión a la base de datos al iniciar el servidor
 try {
