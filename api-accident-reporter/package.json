@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "3.0.0",
+  "version": "2.5.0",
   "description": "",
   "main": "server.js",
   "type": "module",
@@ -9,7 +9,7 @@
     "start": "node server.js"
   },
   "engines": {
-    "node": ">=18.12.1"
+    "node": "20.x"
   },
   "keywords": [],
   "author": "YJOT-DEV",
@@ -24,6 +24,7 @@
     "nodemon": "^3.1.9"
   },
   "overrides": {
-    "tar": "7.5.4"
+    "tar": "7.5.4",
+    "minimatch": "10.2.1"
   }
 }
