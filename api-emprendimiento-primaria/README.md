@@ -8,6 +8,7 @@ Descripción
 Tecnologías y dependencias
 - Node.js (ESM)
 - Express
+- Express-rate-limit
 - MySQL (mysql2)
 - googleapis (Gmail API / OAuth2)
 - bcrypt (hash de contraseñas)
@@ -15,7 +16,7 @@ Tecnologías y dependencias
 - compression (gzip)
 - nodemon (dev)
 
-Estructura relevante
+Archivos relevantes
 - server.js — arranque del servidor (HTTPS en dev, HTTP en prod)
 - src/routes/userRoute.js — /api/users
 - src/routes/oauthRoute.js — /api/oauth
@@ -23,15 +24,15 @@ Estructura relevante
 - src/controllers/oauthController.js
 - src/bd/db.js — conexión a MySQL
 - src/certificate/ — mykey.key, mycert.crt (certificados locales)
-- src/bd/.env — variables de entorno (no versionar)
+- .env — variables de entorno (no versionar)
 
 Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
 - NODE_ENV (development | production)
-- PORT (opcional; por defecto 3000)
+- PORT (opcional por defecto 3000)
 - CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN
 
-Endpoints principales
+Endpoints
 - Usuarios
   - POST /api/users/login       — login (body: { nombre|correo, clave })
   - POST /api/users             — crear usuario
@@ -50,10 +51,12 @@ npm install
 ```
 
 Configuración
-1. Crear archivo .env con las variables listadas arriba (ej: src/bd/.env).
-2. Colocar certificados TLS en:
-   - src/certificate/mykey.key
-   - src/certificate/mycert.crt
+- Crear/editar archivo de variables de entorno en [.env](api-emprendimiento-primaria/.env) con:
+  - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
+- Colocar certificados TLS en:
+  - src/certificate/mykey.key
+  - src/certificate/mycert.crt
+- El servidor lee estos archivos en [server.js](api-emprendimiento-primaria/server.js).
 
 Ejecución
 - Desarrollo (HTTPS local):

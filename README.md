@@ -14,25 +14,17 @@ Estructura
 Tecnologías comunes
 - Node.js (ESM)
 - Express
+- Express-rate-limit
 - MySQL (mysql2)
-- dotenv
-- compression (gzip)
-- nodemon (dev)
+- Dotenv
+- Compression (gzip)
+- Nodemon (dev)
 - HTTPS local con certificados autofirmados (en desarrollo cada API lee src/certificate/mykey.key y mycert.crt)
-- googleapis (solo en los proyectos que usan Gmail OAuth)
-- bcrypt (hash de contraseñas en proyectos que manejan usuarios)
 
 Dependencias (por proyecto)
-- api-login: express, mysql2, dotenv, compression, googleapis, bcrypt
-- api-emprendimiento-primaria: express, mysql2, dotenv, compression, googleapis, bcrypt
-- api-accident-reporter: express, mysql2, dotenv, compression
-
-Variables de entorno (ejemplos)
-- MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
-- NODE_ENV (development | production)
-- PORT (opcional)
-- (Google OAuth) CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN
-> Mantener .env y secretos fuera del repositorio (.gitignore)
+- api-login: express, express-rate-limit, mysql2, dotenv, compression, googleapis, bcrypt
+- api-emprendimiento-primaria: express, express-rate-limit, mysql2, dotenv, compression, googleapis, bcrypt
+- api-accident-reporter: express, express-rate-limit, mysql2, dotenv, compression
 
 Instalación y ejecución (por cada API)
 1. Entrar al directorio de la API:
@@ -43,7 +35,7 @@ Instalación y ejecución (por cada API)
 ```bash
 npm install
 ```
-3. Configurar .env en `src/bd/.env` (o en la raíz del proyecto) y colocar certificados en `src/certificate/` si usa HTTPS local.
+3. Configurar .env en la raíz del proyecto y colocar certificados en `src/certificate/` si usa HTTPS local.
 4. Ejecutar:
 - Desarrollo (con recarga automática, HTTPS local si hay certificados):
 ```bash

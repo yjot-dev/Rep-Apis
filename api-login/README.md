@@ -7,6 +7,7 @@ Descripción
 Tecnologías y dependencias
 - Node.js (ESM)
 - Express
+- Express-rate-limit
 - MySQL (mysql2)
 - Google APIs (googleapis) — envío de correo via Gmail API
 - bcrypt — hashing de contraseñas
@@ -15,24 +16,23 @@ Tecnologías y dependencias
 - HTTPS local con certificados autofirmados
 - nodemon (desarrollo)
 
-Estructura relevante
+Archivos relevantes
 - server.js — arranque del servidor (HTTPS en desarrollo, HTTP en producción)
 - src/routes/userRoute.js — rutas de usuarios
 - src/routes/oauthRoute.js — rutas OAuth / email
-- src/controllers/ — controladores (userController, oauthController, ...)
+- src/controllers/userController.js
+- src/controllers/oauthController.js
 - src/bd/db.js — conexión a MySQL
 - src/certificate/mykey.key, src/certificate/mycert.crt — certificados TLS locales
-- src/bd/.env — variables de entorno (no versionar)
+- .env — variables de entorno (no versionar)
 
-Variables de entorno (ejemplo)
+Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
 - NODE_ENV (development | production)
-- PORT (opcional)
-- CLIENT_ID, CLIENT_SECRET, REDIRECT_URI (Google OAuth)
-- REFRESH_TOKEN (token para enviar correos)
-Nota: mantener .env y REFRESH_TOKEN privados.
+- PORT (opcional por defecto 3000)
+- CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN
 
-Endpoints principales
+Endpoints
 - Usuarios
   - POST /api/users/login       — login
   - POST /api/users             — crear usuario
@@ -50,10 +50,12 @@ npm install
 ```
 
 Configuración
-1. Crear archivo .env con las variables necesarias (ver arriba).
-2. Colocar certificados TLS en:
-   - src/certificate/mykey.key
-   - src/certificate/mycert.crt
+- Crear/editar archivo de variables de entorno en [.env](api-login/.env) con:
+  - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
+- Colocar certificados TLS en:
+  - src/certificate/mykey.key
+  - src/certificate/mycert.crt
+- El servidor lee estos archivos en [server.js](api-login/server.js).
 
 Ejecución
 - Desarrollo (HTTPS local):
