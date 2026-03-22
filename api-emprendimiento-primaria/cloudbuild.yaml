@@ -1,7 +1,12 @@
 steps:
-  # Paso 1: Construir la imagen desde el Dockerfile
+  # Paso 1: Construir la imagen desde el Dockerfile dentro de api-emp
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/empprimaria/api-emp:latest', '.']
+    args: [
+      'build',
+      '-t', 'gcr.io/empprimaria/api-emp:latest',
+      '-f', 'Rep-Apis/api-emprendimiento-primaria/Dockerfile',
+      'Rep-Apis/api-emprendimiento-primaria'
+    ]
 
   # Paso 2: Subir la imagen al registro de contenedores
   - name: 'gcr.io/cloud-builders/docker'

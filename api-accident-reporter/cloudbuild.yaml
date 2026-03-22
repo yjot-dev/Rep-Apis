@@ -1,7 +1,12 @@
 steps:
-  # Paso 1: Construir la imagen desde el Dockerfile
+  # Paso 1: Construir la imagen desde el Dockerfile dentro de api-accident-reporter
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/accidentreporter-488120/api-ar:latest', '.']
+    args: [
+      'build',
+      '-t', 'gcr.io/accidentreporter-488120/api-ar:latest',
+      '-f', 'Rep-Apis/api-accident-reporter/Dockerfile',
+      'Rep-Apis/api-accident-reporter'
+    ]
 
   # Paso 2: Subir la imagen al registro de contenedores
   - name: 'gcr.io/cloud-builders/docker'
