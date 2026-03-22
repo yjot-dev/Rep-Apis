@@ -1,10 +1,4 @@
-import pool from "../bd/db.js";
 import { google } from "googleapis";
-
-// Verifica si el objeto esta vacio
-function isEmptyObject(obj) {
-    return !Object.keys(obj) || Object.keys(obj).length === 0;
-}
 
 // Construir mensaje MIME con Subject UTF-8
 function encodeRFC2047(str) {
@@ -69,15 +63,6 @@ const emailSend = async (req, res) => {
         });
 
         const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
-
-        // Consulta el correo electrónico en BD
-        const sql = "SELECT * FROM usuarios WHERE correo = ?";
-        const [rows] = await pool.query(sql, [para]);
-        console.log("Salida:", rows);
-
-        if (isEmptyObject(rows)) {
-            return res.status(404).send("Error correo no encontrado");
-        }
 
         // Codificar en Base64URL
         const encodedMessage = Buffer.from(message)

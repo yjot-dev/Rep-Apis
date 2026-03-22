@@ -1,10 +1,4 @@
-import pool from "../bd/db.js";
 import { google } from "googleapis";
-
-// Verifica si el objeto esta vacio
-function isEmptyObject(obj) {
-    return !Object.keys(obj) || Object.keys(obj).length === 0;
-}
 
 // Construir mensaje MIME con Subject UTF-8
 function encodeRFC2047(str) {
@@ -70,15 +64,6 @@ const emailSend = async (req, res) => {
 
         const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
 
-        // Consulta el correo electrónico en BD
-        const sql = "SELECT * FROM usuarios WHERE correo = ?";
-        const [rows] = await pool.query(sql, [para]);
-        console.log("Salida:", rows);
-
-        if (isEmptyObject(rows)) {
-            return res.status(404).send("Error correo no encontrado");
-        }
-
         // Codificar en Base64URL
         const encodedMessage = Buffer.from(message)
             .toString("base64")
@@ -100,55 +85,8 @@ const emailSend = async (req, res) => {
     }
 };
 
-// 4. Enviar comentario usando Gmail API
-const feedbackSend = async (req, res) => {
-    try {
-        // Construir mensaje MIME
-        const { asunto, mensaje } = req.body;
-        const mi = "emprendimiento2020g7h2@gmail.com"
-        const message = [
-            `From: ${mi}`,
-            `To: ${mi}`,
-            `Subject: ${encodeRFC2047(asunto)}`,
-            "MIME-Version: 1.0",
-            "Content-Type: text/plain; charset=\"UTF-8\"",
-            "Content-Transfer-Encoding: 7bit",
-            "",
-            mensaje || ""
-        ].join("\r\n");
-        console.log("Entrada:", req.body);
-        
-        // Configurar con refresh_token desde .env
-        oAuth2Client.setCredentials({
-            refresh_token: process.env.REFRESH_TOKEN,
-        });
-
-        const gmail = google.gmail({ version: "v1", auth: oAuth2Client });
-
-        // Codificar en Base64URL
-        const encodedMessage = Buffer.from(message)
-            .toString("base64")
-            .replace(/\+/g, "-")
-            .replace(/\//g, "_")
-            .replace(/=+$/, "");
-
-        // Enviar
-        const result = await gmail.users.messages.send({
-            userId: "me",
-            requestBody: { raw: encodedMessage },
-        });
-
-        console.log("Comentario enviado:", result.data);
-        res.status(200).send("Comentario enviadoo");
-    } catch (err) {
-        console.error("Error al enviar comentario:", err);
-        res.status(500).send("Error al enviar comentario");
-    }
-};
-
 export {
     googleLogin,
     googleCallback,
-    emailSend,
-    feedbackSend
+    emailSend
 };
