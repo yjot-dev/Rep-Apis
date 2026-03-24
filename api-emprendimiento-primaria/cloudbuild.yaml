@@ -4,8 +4,8 @@ steps:
     args: [
       'build',
       '-t', 'gcr.io/empprimaria/api-emp:latest',
-      '-f', 'Rep-Apis/api-emprendimiento-primaria/Dockerfile',
-      'Rep-Apis/api-emprendimiento-primaria'
+      '-f', 'api-emprendimiento-primaria/Dockerfile',
+      'api-emprendimiento-primaria'
     ]
 
   # Paso 2: Subir la imagen al registro de contenedores

@@ -4,8 +4,8 @@ steps:
     args: [
       'build',
       '-t', 'gcr.io/accidentreporter-488120/api-ar:latest',
-      '-f', 'Rep-Apis/api-accident-reporter/Dockerfile',
-      'Rep-Apis/api-accident-reporter'
+      '-f', 'api-accident-reporter/Dockerfile',
+      'api-accident-reporter'
     ]
 
   # Paso 2: Subir la imagen al registro de contenedores
