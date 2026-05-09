@@ -3,20 +3,18 @@ import bcrypt from "bcrypt";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
-    return !Object.keys(obj) || Object.keys(obj).length === 0;
+    return Object.keys(obj).length === 0;
 }
 
 // Seleccionar usuario
 const findUser = async function (req, res) {
     try {
         const { nombre, clave } = req.body;
-        console.log("Entrada:", req.body);
 
         // Consulta para obtener el usuario por nombre o correo
         const sql = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
         const [rows] = await pool.query(sql, [nombre, nombre]);
-        console.log("Salida:", rows);
-        
+
         if (isEmptyObject(rows)) {
             return res.status(404).send("Error usuario no encontrado");
         }

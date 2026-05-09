@@ -29,9 +29,6 @@ const googleCallback = async (req, res) => {
         const { tokens } = await oAuth2Client.getToken(code);
         oAuth2Client.setCredentials(tokens);
 
-        // Muestra token en consola
-        console.log("Refresh token:", tokens.refresh_token);
-
         res.send("Autenticación exitosa, refresh_token guardado.");
     } catch (err) {
         console.error("Error al obtener tokens:", err);
@@ -55,7 +52,6 @@ const emailSend = async (req, res) => {
             "",
             mensaje || ""
         ].join("\r\n");
-        console.log("Entrada:", req.body);
 
         // Configurar con refresh_token desde .env
         oAuth2Client.setCredentials({
@@ -77,7 +73,6 @@ const emailSend = async (req, res) => {
             requestBody: { raw: encodedMessage },
         });
 
-        console.log("Correo enviado:", result.data);
         res.status(200).send("Correo enviado");
     } catch (err) {
         console.error("Error al enviar correo:", err);

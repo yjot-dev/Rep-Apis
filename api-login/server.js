@@ -4,14 +4,14 @@ import express from "express";
 import compression from "compression";
 import { api1 } from "./src/routes/userRoute.js";
 import { api2 } from "./src/routes/oauthRoute.js";
-import { createServer } from "https";
-import { readFileSync } from "fs";
+import { api3 } from "./src/routes/paymentRoute.js";
+import { api4 } from "./src/routes/notificationRoute.js";
 
 const app = express();
 
 const minuteLimiter = expressRateLimit({
   windowMs: 60 * 1000, // 1 minuto
-  max: 5, // máximo 5 requests por IP por minuto
+  max: 25, // máximo 25 requests por IP por minuto
   message: "Has alcanzado el límite de solicitudes por minuto."
 });
 
@@ -25,9 +25,17 @@ const limiters = [minuteLimiter, dailyLimiter];
 
 const PORT = process.env.PORT; // Configurar puerto dinámico
 
+const isProduction = process.env.NODE_ENV === "production"; // Detectar entorno al iniciar el servidor
+
 // Middlewares
 app.use(compression()); // Compresión de respuestas
 app.use(express.json({ limit: "20mb" })); // Parsear JSON con límite de 20MB
+if (!isProduction) {
+  app.use((req, res, next) => {
+    res.setHeader("abypass-tunnel-reminder", "true"); // Header LocalTunnel
+    next();
+  });
+}
 
 // Rutas
 app.get("/", (_, res) => {
@@ -35,6 +43,8 @@ app.get("/", (_, res) => {
 });
 app.use("/api", ...limiters, api1);
 app.use("/api", ...limiters, api2);
+app.use("/api", ...limiters, api3);
+app.use("/api", ...limiters, api4);
 
 // Verificar conexión a la base de datos al iniciar el servidor
 try {
@@ -55,27 +65,12 @@ try {
   }
 }
 
-// Detectar entorno al iniciar el servidor
-const isProduction = process.env.NODE_ENV === "production";
-
-if (isProduction) {
-  // Remoto: solo HTTP, El servidor ya da HTTPS
-  app.listen(PORT, () => {
+app.listen(PORT, () => {
+  if (isProduction) {
+    // Remoto: solo HTTP, el servidor ya da HTTPS
     console.log(`Servidor corriendo en producción en puerto ${PORT}`);
-  });
-} else {
-  // Local: HTTPS con certificados autofirmados
-  try {
-    const privateKey = readFileSync("./src/certificate/mykey.key");
-    const certificate = readFileSync("./src/certificate/mycert.crt");
-    const credentials = { key: privateKey, cert: certificate };
-
-    const httpsServer = createServer(credentials, app);
-    httpsServer.listen(PORT, () => {
-      console.log(`Servidor corriendo en desarrollo (HTTPS) en puerto ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Error al leer los certificados: ", error);
-    process.exit(1);
+  } else {
+    // Local: solo HTTP, el servidor no requiere HTTPS (no es buena practica)
+    console.log(`Servidor corriendo en desarrollo en puerto ${PORT}`);
   }
-}
+});
