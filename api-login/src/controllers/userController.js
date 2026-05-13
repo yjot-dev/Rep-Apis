@@ -12,7 +12,7 @@ const findUser = async function (req, res) {
         const { nombre, clave } = req.body;
 
         // Consulta para obtener el usuario por nombre o correo
-        const sql = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
+        const sql = "SELECT * FROM usuarios WHERE (correo = ? OR nombre = ?) AND estaEnListaBlanca = 1";
         const [rows] = await pool.query(sql, [nombre, nombre]);
 
         if (isEmptyObject(rows)) {
@@ -20,6 +20,9 @@ const findUser = async function (req, res) {
         }
 
         const usuario = rows[0];
+        // Convierte TINYINT a BOOLEAN
+        usuario.esInvitado = usuario.esInvitado === 1;
+        usuario.estaEnListaBlanca = usuario.estaEnListaBlanca === 1;
 
         // Comparar la clave ingresada con la clave encriptada almacenada
         const esLaClave = await bcrypt.compare(clave, usuario.clave);
