@@ -2,7 +2,7 @@ import pool from "../bd/db.js";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
-    return !Object.keys(obj) || Object.keys(obj).length === 0;
+    return Object.keys(obj).length === 0;
 };
 
 // Seleccionar reporte
@@ -11,7 +11,6 @@ const seleccionar_reportes = async function (_, res) {
         // Consulta todos los reportes
         const sql1 = "SELECT * FROM reportes";
         const [rows] = await pool.query(sql1);
-        console.log("Salida:", rows);
 
         if (isEmptyObject(rows)) {
             return res.status(404).send("Error no hay reportes");

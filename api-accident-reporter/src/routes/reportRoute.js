@@ -1,5 +1,4 @@
 import { Router } from "express";
-const api2 = Router();
 import {
     seleccionar_reportes,
     insertar_reporte,
@@ -7,6 +6,7 @@ import {
     eliminar_reporte
 } from "../controllers/reportController.js";
 
+const api2 = Router();
 const resourcePath = "/reports";
 
 api2.get(resourcePath, seleccionar_reportes);

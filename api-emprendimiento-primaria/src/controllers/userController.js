@@ -3,25 +3,26 @@ import bcrypt from "bcrypt";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
-    return !Object.keys(obj) || Object.keys(obj).length === 0;
+    return Object.keys(obj).length === 0;
 };
 
 // Seleccionar usuario
 const findUser = async function (req, res) {
     try {
         const { nombre, clave } = req.body;
-        console.log("Entrada:", req.body);
 
         // Consulta para obtener el usuario por nombre o correo
-        const sql = "SELECT * FROM usuarios WHERE correo = ? OR nombre = ?";
+        const sql = "SELECT * FROM usuarios WHERE (correo = ? OR nombre = ?) AND estaEnListaBlanca = 1";
         const [rows] = await pool.query(sql, [nombre, nombre]);
-        console.log("Salida:", rows);
 
         if (isEmptyObject(rows)) {
             return res.status(404).send("Error usuario no encontrado");
         }
 
         const usuario = rows[0];
+        // Convierte TINYINT a BOOLEAN
+        usuario.esInvitado = usuario.esInvitado === 1;
+        usuario.estaEnListaBlanca = usuario.estaEnListaBlanca === 1;
 
         // Comparar la clave ingresada con la clave encriptada almacenada
         const esLaClave = await bcrypt.compare(clave, usuario.clave);

@@ -1,5 +1,4 @@
 import { Router } from "express";
-const api1 = Router();
 import {
     findUser,
     updateUser,
@@ -8,6 +7,7 @@ import {
     deleteUser
 } from "../controllers/userController.js";
 
+const api1 = Router();
 const resourcePath = "/users";
 
 api1.post(`${resourcePath}/login`, findUser);

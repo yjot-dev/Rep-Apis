@@ -1,8 +1,7 @@
 # API: Login
 
 Descripción
-- API REST para gestión de usuarios y autenticación, además de envío de correos vía Gmail API (OAuth2).
-- Rutas principales: usuarios (/api/users) y OAuth/email (/api/oauth).
+- API REST para gestión de usuarios y autenticación, envío de correos vía Gmail API (OAuth2), pagos con PayPal y notificaciones con Firebase.
 
 Tecnologías y dependencias
 - Node.js (ESM)
@@ -13,17 +12,22 @@ Tecnologías y dependencias
 - bcrypt — hashing de contraseñas
 - dotenv — variables de entorno
 - compression (gzip)
-- HTTPS local con certificados autofirmados
 - nodemon (desarrollo)
+- @paypal/checkout-server-sdk — integración con PayPal para crear y verificar pagos desde la API
+- firebase-admin — integración con Firebase Admin SDK para servicios de backend como notificaciones y administración de Firebase
 
 Archivos relevantes
-- server.js — arranque del servidor (HTTPS en desarrollo, HTTP en producción)
-- src/routes/userRoute.js — rutas de usuarios
+- server.js — arranque del servidor
+- src/routes/userRoute.js
 - src/routes/oauthRoute.js — rutas OAuth / email
+- src/routes/notificationRoute.js
+- src/routes/paymentRoute.js
 - src/controllers/userController.js
 - src/controllers/oauthController.js
+- src/controllers/notificationController.js
+- src/controllers/paymentController.js
 - src/bd/db.js — conexión a MySQL
-- src/certificate/mykey.key, src/certificate/mycert.crt — certificados TLS locales
+locales
 - .env — variables de entorno (no versionar)
 
 Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
@@ -31,6 +35,8 @@ Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 - NODE_ENV (development | production)
 - PORT (opcional por defecto 3000)
 - CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN
+- PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENV, BASE_URL
+- FIREBASE_SERVICE_ACCOUNT
 
 Endpoints
 - Usuarios
@@ -43,6 +49,15 @@ Endpoints
   - GET  /api/oauth/login           — iniciar OAuth (redirige a Google)
   - GET  /api/oauth/oauth2callback  — callback para obtener tokens
   - POST /api/oauth/email           — enviar correo (body: { to, subject, text })
+- Pagos
+  - POST /api/payments/create-order   — crear orden de pago PayPal
+  - GET  /api/payments/paypal-return  — callback de retorno después del pago
+  - GET  /api/payments/paypal-cancel  — callback cuando el pago es cancelado
+  - POST /api/payments/capture-order  — capturar la orden de pago PayPal
+  - GET  /api/payments              — listar pagos registrados
+- Notificaciones
+  - POST /api/notifications         — enviar notificación Firebase
+  - GET  /api/notifications         — obtener notificaciones almacenadas
 
 Instalación
 ```bash
@@ -52,17 +67,13 @@ npm install
 Configuración
 - Crear/editar archivo de variables de entorno en [.env](api-login/.env) con:
   - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
-- Colocar certificados TLS en:
-  - src/certificate/mykey.key
-  - src/certificate/mycert.crt
-- El servidor lee estos archivos en [server.js](api-login/server.js).
 
 Ejecución
-- Desarrollo (HTTPS local):
+- Desarrollo:
 ```bash
 npm run dev
 ```
-- Producción (HTTP):
+- Producción:
 ```bash
 npm start
 ```

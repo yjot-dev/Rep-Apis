@@ -4,26 +4,18 @@ import express from "express";
 import compression from "compression";
 import { api1 } from "./src/routes/userRoute.js";
 import { api2 } from "./src/routes/oauthRoute.js";
-import { createServer } from "https";
-import { readFileSync } from "fs";
 
 const app = express()
 
-const minuteLimiter = expressRateLimit({
-  windowMs: 60 * 1000, // 1 minuto
-  max: 5, // máximo 5 requests por IP por minuto
-  message: "Has alcanzado el límite de solicitudes por minuto."
-});
-
 const dailyLimiter = expressRateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 horas
-  max: 50, // máximo 50 requests por IP al día
+  max: 80, // máximo 80 requests por IP al día
   message: "Has alcanzado el límite diario de solicitudes."
 });
 
-const limiters = [minuteLimiter, dailyLimiter];
-
 const PORT = process.env.PORT; // Configurar puerto dinámico
+
+const isProduction = process.env.NODE_ENV === "production"; // Detectar entorno al iniciar el servidor
 
 // Middlewares
 app.use(compression()); // Compresión de respuestas
@@ -33,8 +25,8 @@ app.use(express.json({ limit: "20mb" })); // Parsear JSON con límite de 20MB
 app.get("/", (_, res) => {
   res.send("API funcionando 🚀");
 });
-app.use("/api", ...limiters, api1);
-app.use("/api", ...limiters, api2);
+app.use("/api", dailyLimiter, api1);
+app.use("/api", dailyLimiter, api2);
 
 // Verificar conexión a la base de datos al iniciar el servidor
 try {
@@ -55,27 +47,12 @@ try {
   }
 }
 
-// Detectar entorno al iniciar el servidor
-const isProduction = process.env.NODE_ENV === "production";
-
-if (isProduction) {
-  // Remoto: solo HTTP, El servidor ya da HTTPS
-  app.listen(PORT, () => {
+app.listen(PORT, () => {
+  if (isProduction) {
+    // Remoto: solo HTTP, el servidor ya da HTTPS
     console.log(`Servidor corriendo en producción en puerto ${PORT}`);
-  });
-} else {
-  // Local: HTTPS con certificados autofirmados
-  try {
-    const privateKey = readFileSync("./src/certificate/mykey.key");
-    const certificate = readFileSync("./src/certificate/mycert.crt");
-    const credentials = { key: privateKey, cert: certificate };
-
-    const httpsServer = createServer(credentials, app);
-    httpsServer.listen(PORT, () => {
-      console.log(`Servidor corriendo en desarrollo (HTTPS) en puerto ${PORT}`);
-    });
-  } catch (error) {
-    console.error("Error al leer los certificados: ", error);
-    process.exit(1);
+  } else {
+    // Local: solo HTTP, el servidor no requiere HTTPS (no es buena practica)
+    console.log(`Servidor corriendo en desarrollo en puerto ${PORT}`);
   }
-}
+});

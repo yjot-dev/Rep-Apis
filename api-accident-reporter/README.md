@@ -8,7 +8,6 @@ Tecnologías y dependencias
 - Express
 - Express-rate-limit
 - MySQL (mysql2)
-- HTTPS (certificados locales)
 - dotenv
 - compression (gzip)
 - nodemon (dev)
@@ -21,8 +20,6 @@ Archivos relevantes
 - src/controllers/reportController.js
 - src/controllers/geocodingController.js
 - src/bd/db.js
-- src/certificate/mykey.key
-- src/certificate/mycert.crt
 - .env — variables de entorno (no versionar)
 
 Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
@@ -45,13 +42,9 @@ npm install
 Configuración
 - Crear/editar archivo de variables de entorno en [.env](api-accident-reporter/.env) con:
   - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
-- Colocar certificados TLS en:
-  - src/certificate/mykey.key
-  - src/certificate/mycert.crt
-- El servidor lee estos archivos en [server.js](api-accident-reporter/server.js).
 
 Ejecución
-- Modo desarrollo (nodemon):
+- Desarrollo:
 ```sh
 npm run dev
 ```

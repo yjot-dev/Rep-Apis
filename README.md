@@ -2,8 +2,8 @@
 
 Descripción
 - Contiene 3 APIs independientes:
-  - api-login — autenticación, usuarios y envío de correos via Gmail API (OAuth2).
-  - api-emprendimiento-primaria — gestión de usuarios y envío de correos/feedback via Gmail API (OAuth2).
+  - api-login — gestión de usuario, pagos, notificaciones y envío de correos via Gmail API.
+  - api-emprendimiento-primaria — gestión de usuario y envío de correos/feedback via Gmail API.
   - api-accident-reporter — gestión de reportes (listar, crear, actualizar, eliminar).
 
 Estructura
@@ -19,7 +19,6 @@ Tecnologías comunes
 - Dotenv
 - Compression (gzip)
 - Nodemon (dev)
-- HTTPS local con certificados autofirmados (en desarrollo cada API lee src/certificate/mykey.key y mycert.crt)
 
 Dependencias (por proyecto)
 - api-login: express, express-rate-limit, mysql2, dotenv, compression, googleapis, bcrypt
@@ -35,9 +34,9 @@ Instalación y ejecución (por cada API)
 ```bash
 npm install
 ```
-3. Configurar .env en la raíz del proyecto y colocar certificados en `src/certificate/` si usa HTTPS local.
+3. Configurar .env en la raíz del proyecto.
 4. Ejecutar:
-- Desarrollo (con recarga automática, HTTPS local si hay certificados):
+- Desarrollo (con recarga automática):
 ```bash
 npm run dev
 ```
@@ -48,11 +47,10 @@ npm start
 Por defecto usan PORT=3000 si no se define.
 
 Notas rápidas
-- En desarrollo las apps intentan arrancar HTTPS leyendo `src/certificate/mykey.key` y `src/certificate/mycert.crt`; si no quieres HTTPS, exporta NODE_ENV=production (o ajusta server.js).
 - Si un archivo ya fue versionado antes de agregarse a .gitignore, dejar de rastrearlo:
 ```bash
 git rm -r --cached ruta/al/archivo
-git commit -m "Stop tracking ignored files"
+git commit -m "Actualizacion de .gitignore"
 ```
 - Verifica reglas de .gitignore con:
 ```bash

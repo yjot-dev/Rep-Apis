@@ -3,7 +3,6 @@ const obtener_coordenadas = async function (req, res) {
     try {
         // Recibir parámetros desde el body
         const { pais, provincia, ciudad } = req.query;
-        console.log("Entrada:", { pais, provincia, ciudad });
 
         // Llamar a la API de Geocoding
         const params = new URLSearchParams({
@@ -26,7 +25,6 @@ const obtener_coordenadas = async function (req, res) {
             longitude: location.lng,
         };
 
-        console.log("Salida:", coordenadas);
         res.status(200).json(coordenadas);
     } catch (error) {
         console.error("Error al obtener coordenadas:", error);

@@ -9,19 +9,11 @@ import { api4 } from "./src/routes/notificationRoute.js";
 
 const app = express();
 
-const minuteLimiter = expressRateLimit({
-  windowMs: 60 * 1000, // 1 minuto
-  max: 25, // máximo 25 requests por IP por minuto
-  message: "Has alcanzado el límite de solicitudes por minuto."
-});
-
 const dailyLimiter = expressRateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 horas
-  max: 50, // máximo 50 requests por IP al día
+  max: 80, // máximo 80 requests por IP al día
   message: "Has alcanzado el límite diario de solicitudes."
 });
-
-const limiters = [minuteLimiter, dailyLimiter];
 
 const PORT = process.env.PORT; // Configurar puerto dinámico
 
@@ -41,10 +33,10 @@ if (!isProduction) {
 app.get("/", (_, res) => {
   res.send("API funcionando 🚀");
 });
-app.use("/api", ...limiters, api1);
-app.use("/api", ...limiters, api2);
-app.use("/api", ...limiters, api3);
-app.use("/api", ...limiters, api4);
+app.use("/api", dailyLimiter, api1);
+app.use("/api", dailyLimiter, api2);
+app.use("/api", dailyLimiter, api3);
+app.use("/api", dailyLimiter, api4);
 
 // Verificar conexión a la base de datos al iniciar el servidor
 try {

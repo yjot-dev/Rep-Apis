@@ -1,11 +1,11 @@
 import { Router } from "express";
-const api2 = Router();
 import {
   googleLogin,
   googleCallback,
   emailSend
 } from "../controllers/oauthController.js";
 
+const api2 = Router();
 const resourcePath = "/oauth";
 
 api2.get(`${resourcePath}/login`, googleLogin);

@@ -3,7 +3,6 @@
 Descripción
 - API REST para gestión de usuarios (registro, login, actualización, eliminación, cambio de clave) y envío de correos vía Gmail API (OAuth2).
 - Rutas principales: usuarios (/api/users) y OAuth/email (/api/oauth).
-- En desarrollo corre por HTTPS local con certificados autofirmados; en producción usa HTTP (según NODE_ENV).
 
 Tecnologías y dependencias
 - Node.js (ESM)
@@ -23,7 +22,6 @@ Archivos relevantes
 - src/controllers/userController.js
 - src/controllers/oauthController.js
 - src/bd/db.js — conexión a MySQL
-- src/certificate/ — mykey.key, mycert.crt (certificados locales)
 - .env — variables de entorno (no versionar)
 
 Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
@@ -53,17 +51,13 @@ npm install
 Configuración
 - Crear/editar archivo de variables de entorno en [.env](api-emprendimiento-primaria/.env) con:
   - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
-- Colocar certificados TLS en:
-  - src/certificate/mykey.key
-  - src/certificate/mycert.crt
-- El servidor lee estos archivos en [server.js](api-emprendimiento-primaria/server.js).
 
 Ejecución
-- Desarrollo (HTTPS local):
+- Desarrollo:
 ```bash
 npm run dev
 ```
-- Producción (HTTP):
+- Producción:
 ```bash
 npm start
 ```
