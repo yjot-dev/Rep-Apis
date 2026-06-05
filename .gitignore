@@ -1,5 +1,7 @@
 api-accident-reporter/node_modules/
 api-accident-reporter/.env
+api-clasificador-peces/node_modules/
+api-clasificador-peces/.env
 api-emprendimiento-primaria/node_modules/
 api-emprendimiento-primaria/.env
 api-login/node_modules/

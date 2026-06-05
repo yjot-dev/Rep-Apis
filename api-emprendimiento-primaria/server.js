@@ -5,7 +5,7 @@ import compression from "compression";
 import { api1 } from "./src/routes/userRoute.js";
 import { api2 } from "./src/routes/oauthRoute.js";
 
-const app = express()
+const isProduction = process.env.NODE_ENV === "production"; // Detectar entorno al iniciar el servidor
 
 const dailyLimiter = expressRateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 horas
@@ -15,7 +15,7 @@ const dailyLimiter = expressRateLimit({
 
 const PORT = process.env.PORT; // Configurar puerto dinámico
 
-const isProduction = process.env.NODE_ENV === "production"; // Detectar entorno al iniciar el servidor
+const app = express()
 
 // Middlewares
 app.use(compression()); // Compresión de respuestas

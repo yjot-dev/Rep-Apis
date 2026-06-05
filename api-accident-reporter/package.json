@@ -1,19 +1,19 @@
 {
-  "name": "api",
+  "name": "api-accident-reporter",
   "version": "2.5.7",
   "description": "",
   "main": "server.js",
   "type": "module",
+  "keywords": [],
+  "author": "YJOT-DEV",
+  "license": "ISC",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
-  "keywords": [],
-  "author": "YJOT-DEV",
-  "license": "ISC",
   "dependencies": {
     "compression": "^1.8.1",
     "express": "^5.2.1",

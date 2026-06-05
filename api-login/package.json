@@ -1,19 +1,19 @@
 {
-  "name": "api",
+  "name": "api-login",
   "version": "2.5.7",
   "description": "",
   "main": "server.js",
   "type": "module",
+  "keywords": [],
+  "author": "YJOT-DEV",
+  "license": "ISC",
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
-  "keywords": [],
-  "author": "YJOT-DEV",
-  "license": "ISC",
   "dependencies": {
     "@paypal/checkout-server-sdk": "^1.0.3",
     "bcrypt": "^6.0.0",

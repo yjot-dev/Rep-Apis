@@ -1,0 +1,29 @@
+steps:
+  # Paso 1: Construir la imagen desde el Dockerfile dentro de api-accident-reporter
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/clasificador-peces/api-cp:latest',
+      '-f', 'api-cp/Dockerfile',
+      'api-cp'
+    ]
+
+  # Paso 2: Subir la imagen al registro de contenedores
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/clasificador-peces/api-cp:latest']
+
+  # Paso 3: Desplegar en Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run', 'deploy', 'servicio-api-cp',
+        '--image', 'gcr.io/clasificador-peces/api-cp:latest',
+        '--region', 'us-central1',
+        '--platform', 'managed',
+        '--allow-unauthenticated',
+        '--port', '3000'
+      ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
