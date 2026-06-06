@@ -21,8 +21,7 @@ steps:
         '--image', 'gcr.io/accidentreporter-488120/api-ar:latest',
         '--region', 'us-central1',
         '--platform', 'managed',
-        '--allow-unauthenticated',
-        '--port', '3000'
+        '--allow-unauthenticated'
       ]
 
 options:

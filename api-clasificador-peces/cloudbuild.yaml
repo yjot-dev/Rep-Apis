@@ -21,8 +21,7 @@ steps:
         '--image', 'gcr.io/clasificador-peces/api-cp:latest',
         '--region', 'us-central1',
         '--platform', 'managed',
-        '--allow-unauthenticated',
-        '--port', '3000'
+        '--allow-unauthenticated'
       ]
 
 options:

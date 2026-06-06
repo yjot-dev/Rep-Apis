@@ -21,8 +21,7 @@ steps:
         '--image', 'gcr.io/empprimaria/api-emp:latest',
         '--region', 'us-central1',
         '--platform', 'managed',
-        '--allow-unauthenticated',
-        '--port', '3000'
+        '--allow-unauthenticated'
       ]
 
 options:
