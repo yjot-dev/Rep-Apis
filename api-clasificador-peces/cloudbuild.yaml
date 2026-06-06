@@ -4,7 +4,7 @@ steps:
     args: [
       'build',
       '-t', 'gcr.io/clasificador-peces/api-cp:latest',
-      '-f', 'api-cp/Dockerfile',
+      '-f', 'api-clasificador-peces/Dockerfile',
       'api-cp'
     ]
 
