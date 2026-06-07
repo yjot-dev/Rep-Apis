@@ -12,10 +12,8 @@ const dailyLimiter = expressRateLimit({
 
 const app = express()
 
-// Confía en el proxy inverso (Nginx) solo en desarrollo
-if (!isProduction) {
-  app.set("trust proxy", 1);
-}
+// Confiar en proxy
+app.set("trust proxy", 1);
 
 // Middlewares
 app.use(compression()); // Compresión de respuestas
