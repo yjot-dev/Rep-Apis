@@ -1,5 +1,5 @@
 steps:
-  # Paso 1: Construir la imagen desde el Dockerfile dentro de api-emp
+  # Paso 1: Construir la imagen desde el Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',

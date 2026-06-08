@@ -5,13 +5,15 @@ Descripción
   - api-login — gestión de usuario, pagos, notificaciones y envío de correos via Gmail API.
   - api-emprendimiento-primaria — gestión de usuario y envío de correos/feedback via Gmail API.
   - api-accident-reporter — gestión de reportes (listar, crear, actualizar, eliminar).
-  - api-clasificador-peces — clasificador de imagenes de tres razas de peces: betta, guppy y molly 
+  - api-clasificador-peces — clasificador de imagenes de tres razas de peces: betta, guppy y molly
+  - api-clasificador-banana — clasificador de imagenes del estado de un banano: demasiado maduro, maduro, podrido y verde 
 
 Estructura
 - api-login/
 - api-emprendimiento-primaria/
 - api-accident-reporter/
 - api-clasificador-peces/
+- api-clasificador-banana/
 
 Tecnologías comunes
 - Node.js (ESM)
@@ -26,6 +28,7 @@ Dependencias (por proyecto)
 - api-emprendimiento-primaria: express, express-rate-limit, mysql2, dotenv, compression, googleapis, bcrypt
 - api-accident-reporter: express, express-rate-limit, mysql2, dotenv, compression
 - api-clasificador-peces: express, express-rate-limit, @tensorflow/tfjs-node, sharp, dotenv, compression
+- api-clasificador-banana: express, express-rate-limit, @tensorflow/tfjs-node, sharp, dotenv, compression
 
 Instalación y ejecución (por cada API)
 1. Entrar al directorio de la API:
@@ -33,6 +36,7 @@ Instalación y ejecución (por cada API)
    - cd api-emprendimiento-primaria
    - cd api-accident-reporter
    - cd api-clasificador-peces
+   - cd api-clasificador-banana
 2. Instalar dependencias:
 ```bash
 npm install

@@ -1,0 +1,28 @@
+steps:
+  # Paso 1: Construir la imagen desde el Dockerfile
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/clasificador-banana/api-cb:latest',
+      '-f', 'api-clasificador-banana/Dockerfile',
+      'api-clasificador-banana'
+    ]
+
+  # Paso 2: Subir la imagen al registro de contenedores
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/clasificador-banana/api-cb:latest']
+
+  # Paso 3: Desplegar en Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run', 'deploy', 'servicio-api-cb',
+        '--image', 'gcr.io/clasificador-banana/api-cb:latest',
+        '--region', 'us-central1',
+        '--platform', 'managed',
+        '--allow-unauthenticated'
+      ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
