@@ -27,7 +27,6 @@ const client = new paypal.core.PayPalHttpClient(environment());
 const createOrder = async function (req, res) {
   try {
     const { plan, userId } = req.body;
-    const BASE_URL = process.env.BASE_URL;
 
     let amount;
     switch (plan) {
@@ -50,8 +49,8 @@ const createOrder = async function (req, res) {
         },
       ],
       application_context: {
-        return_url: `${BASE_URL}/paypal-return`,
-        cancel_url: `${BASE_URL}/paypal-cancel`
+        return_url: `com.yjotdev.login://paypal/return`,
+        cancel_url: `com.yjotdev.login://paypal/cancel`
       }
     });
 
