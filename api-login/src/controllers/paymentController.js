@@ -21,20 +21,36 @@ function isEmptyObject(obj) {
   return Object.keys(obj).length === 0;
 }
 
+// Define el cliente de PayPal
 const client = new paypal.core.PayPalHttpClient(environment());
+
+// Mapeo de países a monedas
+const countryCurrencyMap = {
+  "EC": "USD", // Ecuador - Dólar estadounidense
+  "MX": "MXN", // México - Peso mexicano
+  "ES": "EUR", // España - Euro
+  "US": "USD", // Estados Unidos - Dólar estadounidense
+  "AR": "USD", // Argentina - Dólar estadounidense
+  "CA": "CAD", // Canadá - Dólar canadiense
+  "CO": "USD", // Colombia - Dólar estadounidense
+  "SV": "USD", // El Salvador - Dólar estadounidense
+  "PE": "USD", // Perú - Dólar estadounidense
+  "GB": "GBP", // Reino Unido - Libra esterlina
+};
 
 // Crear orden de pago
 const createOrder = async function (req, res) {
   try {
-    const { plan, userId } = req.body;
+    const { plan, userId, countryCode } = req.body;
 
-    let amount;
+    let amountOfMoney;
     switch (plan) {
-      case "basic": amount = "5.00"; break;
-      case "premium": amount = "10.00"; break;
-      case "enterprise": amount = "20.00"; break;
+      case "test": amountOfMoney = "1.00"; break;
+      case "lv1-support": amountOfMoney = "5.00"; break;
+      case "lv2-support": amountOfMoney = "10.00"; break;
       default: return res.status(400).send("Plan inválido");
     }
+    const currency = countryCurrencyMap[countryCode] || "USD";
 
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer("return=representation");
@@ -43,8 +59,8 @@ const createOrder = async function (req, res) {
       purchase_units: [
         {
           amount: {
-            currency_code: "USD",
-            value: amount,
+            currency_code: currency,
+            value: amountOfMoney,
           },
         },
       ],
