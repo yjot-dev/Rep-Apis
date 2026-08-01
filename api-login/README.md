@@ -1,19 +1,18 @@
 # API: Login
 
 Descripción
-- API REST para gestión de usuarios y autenticación, envío de correos vía Gmail API (OAuth2), pagos con PayPal y notificaciones con Firebase.
+- API REST para gestión de usuarios y autenticación, envío de correos vía Gmail API (OAuth2), pagos con Google Play Billing y notificaciones con Firebase.
 
 Tecnologías y dependencias
 - Node.js (ESM)
 - Express
 - Express-rate-limit
 - MySQL (mysql2)
-- Google APIs (googleapis) — envío de correo via Gmail API
+- Google APIs (googleapis) — Gmail API y pagos con Google Play Billing
 - bcrypt — hashing de contraseñas
 - dotenv — variables de entorno
 - compression (gzip)
 - nodemon (desarrollo)
-- @paypal/checkout-server-sdk — integración con PayPal para crear y verificar pagos desde la API
 - firebase-admin — integración con Firebase Admin SDK para servicios de backend como notificaciones y administración de Firebase
 
 Archivos relevantes
@@ -35,29 +34,26 @@ Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 - NODE_ENV (development | production)
 - PORT (opcional por defecto 3000)
 - CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN
-- PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_ENV, BASE_URL
 - FIREBASE_SERVICE_ACCOUNT
+- GPB_SERVICE_ACCOUNT
 
 Endpoints
 - Usuarios
-  - POST /api/users/login       — login
-  - POST /api/users             — crear usuario
-  - PATCH /api/users            — cambiar contraseña
-  - PUT /api/users/:id          — actualizar usuario
-  - DELETE /api/users/:id       — eliminar usuario
+  - POST /api/users/login           — login
+  - POST /api/users                 — crear usuario
+  - PATCH /api/users                — cambiar contraseña
+  - PUT /api/users/:id              — actualizar usuario
+  - DELETE /api/users/:id           — eliminar usuario
 - OAuth / Email
-  - GET  /api/oauth/login           — iniciar OAuth (redirige a Google)
+  - GET  /api/oauth/login           — iniciar OAuth
   - GET  /api/oauth/oauth2callback  — callback para obtener tokens
-  - POST /api/oauth/email           — enviar correo (body: { to, subject, text })
+  - POST /api/oauth/email           — enviar correo
 - Pagos
-  - POST /api/payments/create-order   — crear orden de pago PayPal
-  - GET  /api/payments/paypal-return  — callback de retorno después del pago
-  - GET  /api/payments/paypal-cancel  — callback cuando el pago es cancelado
-  - POST /api/payments/capture-order  — capturar la orden de pago PayPal
-  - GET  /api/payments              — listar pagos registrados
+  - POST /api/payments              — validar pagos con Google Play Billing
+  - GET  /api/payments              — obtener pagos registrados
 - Notificaciones
   - POST /api/notifications         — enviar notificación Firebase
-  - GET  /api/notifications         — obtener notificaciones almacenadas
+  - GET  /api/notifications         — obtener notificaciones registradas
 
 Instalación
 ```bash

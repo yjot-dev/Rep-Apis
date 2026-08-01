@@ -8,3 +8,5 @@ api-emprendimiento-primaria/node_modules/
 api-emprendimiento-primaria/.env
 api-login/node_modules/
 api-login/.env
+api-sitio-web/node_modules/
+api-sitio-web/.env

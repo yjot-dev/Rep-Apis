@@ -1,0 +1,28 @@
+steps:
+  # Paso 1: Construir la imagen desde el Dockerfile
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/yjotdev/api-sitio-web:latest',
+      '-f', 'api-sitio-web/Dockerfile',
+      'api-sitio-web'
+    ]
+
+  # Paso 2: Subir la imagen al registro de contenedores
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/yjotdev/api-sitio-web:latest']
+
+  # Paso 3: Desplegar en Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      [
+        'run', 'deploy', 'servicio-api-sitio-web',
+        '--image', 'gcr.io/yjotdev/api-sitio-web:latest',
+        '--region', 'us-central1',
+        '--platform', 'managed',
+        '--allow-unauthenticated'
+      ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY

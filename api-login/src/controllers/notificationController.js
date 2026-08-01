@@ -18,10 +18,18 @@ function isEmptyObject(obj) {
   return Object.keys(obj).length === 0;
 }
 
+// Utilidad para formatear a fecha local string
+function toLocalString(d) {
+  const date = new Date(d);
+  const offset = date.getTimezoneOffset() * 60000;
+  const localDate = new Date(date.getTime() - offset);
+  return localDate.toISOString().slice(0, 19).replace('T', ' ');
+}
+
 // Enviar notificacion push a usuario
 const sendNotification = async function (req, res) {
   try {
-    const { userId, token, title, body } = req.body;
+    const { userId, token, title, body, date } = req.body;
 
     // Inicializar entorno Firebase
     environment();
@@ -34,9 +42,11 @@ const sendNotification = async function (req, res) {
     await admin.messaging().send(message);
 
     // Guardar notificacion en la tabla 'notificaciones'
-    const now = new Date();
-    const date = now.toISOString().slice(0, 19).replace('T', ' ');
-    const notificacion = { mensaje: `${title}: ${body}`, fecha: date, usuario_id: userId };
+    const notificacion = { 
+      mensaje: `${title}: ${body}`,
+      fecha: date ? toLocalString(date) : toLocalString(new Date()), 
+      usuario_id: userId
+    };
     await pool.query("INSERT INTO notificaciones SET ?", notificacion);
 
     res.status(200).send("Notificación enviada correctamente");
@@ -66,7 +76,13 @@ const selectNotification = async function (req, res) {
       return res.status(404).send("Error notificaciones de usuario no encontradas");
     }
 
-    res.status(200).send(rows);
+    // Asegurar fecha con formato consistente
+    const formattedRows = rows.map(row => ({
+      ...row,
+      fecha: toLocalString(row.fecha)
+    }));
+
+    res.status(200).send(formattedRows);
   } catch (error) {
     console.error("Error al seleccionar notificaciones de usuario: ", error);
     res.status(500).send("Error del servidor");

@@ -1,131 +1,101 @@
 import pool from "../bd/db.js";
-import paypal from "@paypal/checkout-server-sdk";
-
-// Configuración del entorno de PayPal
-function environment() {
-  if (process.env.PAYPAL_ENV === "sandbox") {
-    return new paypal.core.SandboxEnvironment(
-      process.env.PAYPAL_CLIENT_ID,
-      process.env.PAYPAL_CLIENT_SECRET
-    );
-  } else {
-    return new paypal.core.LiveEnvironment(
-      process.env.PAYPAL_CLIENT_ID,
-      process.env.PAYPAL_CLIENT_SECRET
-    );
-  }
-}
+import { google } from "googleapis";
 
 // Verifica si el objeto esta vacio
 function isEmptyObject(obj) {
   return Object.keys(obj).length === 0;
 }
 
-// Define el cliente de PayPal
-const client = new paypal.core.PayPalHttpClient(environment());
+// Utilidad para formatear a fecha local string
+function toLocalString(d) {
+  const date = new Date(d);
+  const offset = date.getTimezoneOffset() * 60000;
+  const localDate = new Date(date.getTime() - offset);
+  return localDate.toISOString().slice(0, 19).replace('T', ' ');
+}
 
-// Crear orden de pago
-const createOrder = async function (req, res) {
+// Validar compra de Google Play
+const validatePayment = async function (req, res) {
   try {
-    const { plan, userId, moneyCode } = req.body;
+    const { purchaseToken, productId, userId, amount, money, date } = req.body;
 
-    let amountOfMoney;
-    switch (plan) {
-      case "test": amountOfMoney = "1.00"; break;
-      case "lv1-support": amountOfMoney = "5.00"; break;
-      case "lv2-support": amountOfMoney = "10.00"; break;
-      default: return res.status(400).send("Plan inválido");
+    if (!purchaseToken || !productId || !userId) {
+      return res.status(400).send("Faltan parámetros requeridos");
     }
 
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.prefer("return=representation");
-    request.requestBody({
-      intent: "CAPTURE",
-      purchase_units: [
-        {
-          amount: {
-            currency_code: moneyCode,
-            value: amountOfMoney,
-          },
-        },
-      ],
-      application_context: {
-        return_url: `com.yjotdev.login://paypal/return`,
-        cancel_url: `com.yjotdev.login://paypal/cancel`
-      }
+    // 1. Verificar primero si el token ya existe en DB para ahorrar llamadas a la API
+    const sql1 = "SELECT id FROM pagos WHERE purchase_token = ?";
+    const [existingToken] = await pool.query(sql1, [purchaseToken]);
+
+    if (existingToken.length > 0) {
+      return res.status(409).send("Token de compra ya procesado");
+    }
+
+    // 2. Autenticación con Google API
+    const serviceAccount = JSON.parse(process.env.GPB_SERVICE_ACCOUNT);
+    if (serviceAccount.private_key) {
+      serviceAccount.private_key = serviceAccount.private_key.replace(/\n/g, '\n');
+    }
+    const auth = new google.auth.GoogleAuth({
+      credentials: serviceAccount,
+      scopes: ["https://www.googleapis.com/auth/androidpublisher"],
     });
 
-    // Ejecutar la solicitud para crear la orden de pago de Paypal
-    const order = await client.execute(request);
+    const androidPublisher = google.androidpublisher({
+      version: "v3",
+      auth: auth,
+    });
 
-    // Extraer el approveUrl de los links que devuelve PayPal
-    const approveUrl = order.result.links.find(link => link.rel === "approve").href;
+    // 3. Validar compra con Google Play
+    const response = await androidPublisher.purchases.products.get({
+      packageName: process.env.GPB_PACKAGE_NAME,
+      productId: productId,
+      token: purchaseToken,
+    });
 
-    // Guardar orderId y userId en la tabla 'ordenes_temp'
-    const orden_temp = { orderId: order.result.id, userId: userId }
-    await pool.query("INSERT INTO ordenes_temp SET ?", orden_temp);
+    const purchaseData = response.data;
 
-    res.status(200).json({ approveUrl: approveUrl });
-  } catch (error) {
-    console.error("Error creando orden PayPal:", error);
-    res.status(500).send("Error del servidor");
-  }
-};
+    // 4. Verificar si la compra es válida
+    if (purchaseData.purchaseState === 0) {
 
-// Controlador para aprobación de pago
-const paypalReturn = async function (req, res) {
-  const token = req.query.token;
-  res.send(`
-    <script>
-      window.location.href = "com.yjotdev.login://paypal/return?token=${token}";
-    </script>
-  `);
-}
+      // 5. RECONOCER LA COMPRA (Obligatorio para que Google no la reembolse)
+      if (purchaseData.acknowledgementState === 0) {
+        await androidPublisher.purchases.products.acknowledge({
+          packageName: process.env.GPB_PACKAGE_NAME,
+          productId: productId,
+          token: purchaseToken,
+        });
+      }
 
-// Controlador para cancelación de pago
-const paypalCancel = async function (_, res) {
-  res.send(`
-    <script>
-      window.location.href = "com.yjotdev.login://paypal/cancel";
-    </script>
-  `);
-}
+      // 6. Guardar en Base de Datos
+      const pagoNuevo = {
+        monto: amount,
+        moneda: money,
+        fecha: date ? toLocalString(date) : toLocalString(new Date(parseInt(purchaseData.purchaseTimeMillis))),
+        estado: purchaseData.purchaseState,
+        purchase_token: purchaseToken,
+        usuario_id: userId
+      };
 
-// Capturar pago
-const captureOrder = async function (req, res) {
-  try {
-    const { orderId } = req.body;
+      const sql2 = "INSERT INTO pagos SET ?";
+      await pool.query(sql2, pagoNuevo);
 
-    // Capturar la orden en PayPal
-    const request = new paypal.orders.OrdersCaptureRequest(orderId);
-    request.requestBody({});
-    const capture = await client.execute(request);
-
-    // Extraer datos relevantes
-    const result = capture.result.purchase_units[0].payments.captures[0];
-    const amount = result.amount.value;
-    const money = result.amount.currency_code
-    const status = result.status;
-    const date = new Date(result.update_time);
-
-    // Recuperar el userId asociado al orderId
-    const [rows] = await pool.query(
-      "SELECT userId FROM ordenes_temp WHERE orderId = ?",
-      [orderId]
-    );
-    if (isEmptyObject(rows)) {
-      return res.status(404).send("Usuario no encontrado para esta orden");
+      return res.status(200).json({ message: "Compra validada y reconocida correctamente" });
+    } else {
+      return res.status(400).send(`Compra no válida (estado: ${purchaseData.purchaseState})`);
     }
-    const userId = rows[0].userId;
 
-    // Guardar pago en la tabla 'pagos'
-    const pago = { monto: amount, moneda: money, estado: status, fecha: date, usuario_id: userId };
-    await pool.query("INSERT INTO pagos SET ?", pago);
-
-    res.status(200).send("Orden capturada correctamente");
   } catch (error) {
-    console.error("Error capturando orden PayPal:", error);
-    res.status(500).send("Error del servidor");
+    console.error("Error validando compra:", error);
+
+    if (error.code === 404) {
+      return res.status(404).send("Producto o token no encontrado");
+    }
+    if (error.code === 401) {
+      return res.status(401).send("Permisos insuficientes o credenciales de Google Play inválidas");
+    }
+
+    return res.status(500).send("Error interno al validar la compra");
   }
 };
 
@@ -149,7 +119,13 @@ const selectPayments = async function (req, res) {
       return res.status(404).send("Error pagos de usuario no encontrados");
     }
 
-    res.status(200).send(rows);
+    // Asegurar fecha con formato consistente
+    const formattedRows = rows.map(row => ({
+      ...row,
+      fecha: toLocalString(row.fecha)
+    }));
+
+    res.status(200).send(formattedRows);
   } catch (error) {
     console.error("Error al seleccionar pagos de usuario: ", error);
     res.status(500).send("Error del servidor");
@@ -157,9 +133,6 @@ const selectPayments = async function (req, res) {
 }
 
 export {
-  createOrder,
-  paypalReturn,
-  paypalCancel,
-  captureOrder,
-  selectPayments
+  selectPayments,
+  validatePayment
 };
