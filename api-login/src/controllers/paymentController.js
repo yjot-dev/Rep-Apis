@@ -1,11 +1,6 @@
 import pool from "../bd/db.js";
 import { google } from "googleapis";
 
-// Verifica si el objeto esta vacio
-function isEmptyObject(obj) {
-  return Object.keys(obj).length === 0;
-}
-
 // Utilidad para formatear a fecha local string
 function toLocalString(d) {
   const date = new Date(d);
@@ -115,7 +110,7 @@ const selectPayments = async function (req, res) {
 
     const [rows] = await pool.query(sql, params);
 
-    if (isEmptyObject(rows)) {
+    if (rows.length === 0) {
       return res.status(404).send("Error pagos de usuario no encontrados");
     }
 

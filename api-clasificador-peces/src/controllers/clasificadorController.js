@@ -1,85 +1,33 @@
-import * as tf from '@tensorflow/tfjs-node';
-import sharp from 'sharp';
-import fs from 'fs';
+import pool from "../bd/db.js";
 
-// Constantes
-const INPUT_SIZE = 224;
-const LABELS = ['Betta', 'Guppy', 'Molly'];
-
-let model = null;
-
-// Función auxiliar para cargar modelo una sola vez
-const loadModelIfNeeded = async function () {
-    if (!model) {
-        model = await tf.loadGraphModel('file://./models/model.json');
-    }
-    return model;
-};
-
-// Función auxiliar para parsear base64
-const parseBase64Image = function (dataString) {
+// Seleccionar especies
+const seleccionar_especies = async function (req, res) {
     try {
-        const matches = dataString.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
-        if (!matches || matches.length !== 3) return null;
-        return Buffer.from(matches[2], 'base64');
-    } catch {
-        return null;
-    }
-};
+        const { searchedText } = req.query;
 
-// Método principal de inferencia
-const inferir_pez = async function (req, res) {
-    try {
-        // Acepta: base64 en JSON body
-        const { image } = req.body;
-        if (!image) {
-            return res.status(400).send("Error: campo 'image' requerido en el body");
+        // Consulta todas las especies si no hay texto de búsqueda
+        let sql = "SELECT * FROM especies";
+        let params = [];
+        if (searchedText) {
+            sql += " WHERE LOWER(tipo) LIKE LOWER(?) OR LOWER(nombreComun) LIKE LOWER(?) OR LOWER(nombreCientifico) LIKE LOWER(?)";
+            params.push(`%${searchedText}%`);
+            params.push(`%${searchedText}%`);
+            params.push(`%${searchedText}%`);
+        }
+        sql += " ORDER BY nombreComun ASC";
+        const [rows] = await pool.query(sql, params);
+
+        if (rows.length === 0) {
+            return res.status(404).send("Error no hay especies");
         }
 
-        const imgBuffer = parseBase64Image(image);
-        if (!imgBuffer) {
-            return res.status(400).send("Error: imagen base64 inválida");
-        }
-
-        // Normalizar/resizer con sharp -> PNG buffer
-        const resizedBuffer = await sharp(imgBuffer)
-            .resize(INPUT_SIZE, INPUT_SIZE, { fit: 'cover' })
-            .removeAlpha()
-            .png()
-            .toBuffer();
-
-        // Crear tensor directamente con tf.node.decodeImage
-        const imgTensor = tf.node.decodeImage(resizedBuffer, 3)
-            .toFloat()
-            .div(255.0)
-            .expandDims(0);
-
-        const mdl = await loadModelIfNeeded();
-        let preds = mdl.predict(imgTensor);
-
-        // La variable preds puede ser tensor o arreglo
-        if (Array.isArray(preds)) preds = preds[0];
-        let scores = preds;
-        if (scores.shape.length === 2 && scores.shape[0] === 1) {
-            scores = tf.squeeze(scores);
-        }
-        const scoresData = await tf.softmax(scores).data();
-
-        // Ordenar resultados
-        const scoresArr = Array.from(scoresData);
-        const resultados = LABELS.map((label, i) => ({
-            label,
-            score: scoresArr[i]
-        })).sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
-
-        // Limpiar tensores
-        tf.dispose([imgTensor, preds, scores]);
-
-        return res.status(200).json(resultados);
+        res.status(200).send(rows);
     } catch (error) {
-        console.error("Error en inferencia:", error);
-        return res.status(500).send("Error del servidor en inferencia");
+        console.error("Error al consultar especies: ", error);
+        res.status(500).send("Error del servidor");
     }
 };
 
-export { inferir_pez };
+export {
+    seleccionar_especies
+};

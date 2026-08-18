@@ -1,11 +1,6 @@
 import pool from "../bd/db.js";
 import bcrypt from "bcrypt";
 
-// Verifica si el objeto esta vacio
-function isEmptyObject(obj) {
-    return Object.keys(obj).length === 0;
-}
-
 // Seleccionar usuario
 const findUser = async function (req, res) {
     try {
@@ -15,7 +10,7 @@ const findUser = async function (req, res) {
         const sql = "SELECT * FROM usuarios WHERE (correo = ? OR nombre = ?) AND estaEnListaBlanca = 1";
         const [rows] = await pool.query(sql, [nombre, nombre]);
 
-        if (isEmptyObject(rows)) {
+        if (rows.length === 0) {
             return res.status(404).send("Error usuario no encontrado");
         }
 
@@ -106,7 +101,7 @@ const updateUser = async function (req, res) {
         const sql1 = "SELECT clave FROM usuarios WHERE id = ?";
         const [rows] = await pool.query(sql1, [id]);
 
-        if (isEmptyObject(rows)) {
+        if (rows.length === 0) {
             return res.status(404).send("Error clave no encontrada");
         }
 

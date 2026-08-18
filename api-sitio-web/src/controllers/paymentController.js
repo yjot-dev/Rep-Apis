@@ -16,11 +16,6 @@ function environment() {
   }
 }
 
-// Verifica si el objeto esta vacio
-function isEmptyObject(obj) {
-  return Object.keys(obj).length === 0;
-}
-
 // Define el cliente de PayPal
 const client = new paypal.core.PayPalHttpClient(environment());
 
@@ -113,7 +108,7 @@ const captureOrder = async function (req, res) {
       "SELECT userId FROM ordenes_temp WHERE orderId = ?",
       [orderId]
     );
-    if (isEmptyObject(rows)) {
+    if (rows.length === 0) {
       return res.status(404).send("Usuario no encontrado para esta orden");
     }
 

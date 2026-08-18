@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { inferir_pez } from "../controllers/clasificadorController.js";
+import { seleccionar_especies } from "../controllers/clasificadorController.js";
 
 const api1 = Router();
-const resourcePath = "/classify";
+const resourcePath = "/species";
 
-api1.post(resourcePath, inferir_pez);
+api1.get(resourcePath, seleccionar_especies);
 
 export { api1 };

@@ -1,11 +1,6 @@
 import pool from "../bd/db.js";
 import crypto from "crypto";
 
-// Verifica si el objeto esta vacio
-function isEmptyObject(obj) {
-    return Object.keys(obj).length === 0;
-};
-
 // Seleccionar reporte
 const seleccionar_reportes = async function (_, res) {
     try {
@@ -13,7 +8,7 @@ const seleccionar_reportes = async function (_, res) {
         const sql1 = "SELECT * FROM reportes";
         const [rows] = await pool.query(sql1);
 
-        if (isEmptyObject(rows)) {
+        if (rows.length === 0) {
             return res.status(404).send("Error no hay reportes");
         }
 
