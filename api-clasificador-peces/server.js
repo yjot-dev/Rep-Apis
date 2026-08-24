@@ -2,7 +2,7 @@ import pool from "./src/bd/db.js";
 import expressRateLimit from "express-rate-limit";
 import express from "express";
 import compression from "compression";
-import { api1 } from "./src/routes/clasificadorRoute.js";
+import { api1 } from "./src/routes/especiesRoute.js";
 
 const isProduction = process.env.NODE_ENV === "production"; // Detectar entorno al iniciar el servidor
 

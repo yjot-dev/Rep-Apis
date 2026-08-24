@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { seleccionar_especies } from "../controllers/clasificadorController.js";
+import { seleccionar_especies } from "../controllers/especiesController.js";
 
 const api1 = Router();
 const resourcePath = "/species";
