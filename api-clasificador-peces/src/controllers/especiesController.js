@@ -27,7 +27,7 @@ async function translateArray(values, sourceLang = "es", targetLang = "es") {
     // Configuración de la petición
     const request = {
         parent: `projects/clasificador-peces/locations/global`,
-        contents: [values],
+        contents: values,
         mimeType: "text/plain",
         sourceLanguageCode: sourceLang,
         targetLanguageCode: targetLang,
