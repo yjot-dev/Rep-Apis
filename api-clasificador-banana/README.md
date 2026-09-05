@@ -1,23 +1,23 @@
 # API: Clasificador de Bananas
 
 Descripción
-- API para clasificar imágenes del estado de una banana: verde, maduro, muy maduro y podrido.
+- API para obtener información detallada sobre especies de banano.
 
 Tecnologías y dependencias
 - Node.js (ESM)
+- @google-cloud/translate
+- compression (gzip)
 - Express
 - Express-rate-limit
-- @tensorflow/tfjs-node
-- sharp
+- mysql2
 - dotenv
-- compression (gzip)
 - nodemon (dev)
 
 Archivos relevantes
 - server.js
 - package.json
-- src/routes/clasificadorRoute.js
-- src/controllers/clasificadorController.js
+- src/routes/especiesRoute.js
+- src/controllers/especiesController.js
 - .env — variables de entorno (no versionar)
 
 Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
@@ -25,7 +25,7 @@ Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 - NODE_ENV (development | production)
 
 Endpoints
-- POST /classify — inferir_banana
+- GET /species — seleccionar_especies
 
 Instalación
 ```sh

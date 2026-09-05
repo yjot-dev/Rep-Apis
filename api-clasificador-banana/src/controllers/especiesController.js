@@ -26,7 +26,7 @@ async function translateArray(values, sourceLang = "es", targetLang = "es") {
 
     // Configuración de la petición
     const request = {
-        parent: `projects/clasificador-peces/locations/global`,
+        parent: `projects/clasificador-banana/locations/global`,
         contents: values,
         mimeType: "text/plain",
         sourceLanguageCode: sourceLang,
@@ -57,14 +57,13 @@ const seleccionar_especies = async function (req, res) {
         // Traducción de los campos de cada especie
         for (let i = 0; i < rows.length; i++) {
             const especie = rows[i];
-            const values = [especie.nombreComun, especie.tipo, especie.habitatNatural, especie.dieta];
+            const values = [especie.nombreComun, especie.zonaDeCultivo, especie.enfermedad];
             const translatedValues = await translateArray(values, "es", language);
             rows[i] = {
                 ...especie, // conserva otros campos
                 nombreComun: translatedValues[0],
-                tipo: translatedValues[1],
-                habitatNatural: translatedValues[2],
-                dieta: translatedValues[3]
+                zonaDeCultivo: translatedValues[1],
+                enfermedad: translatedValues[2]
             };
         }
         res.status(200).send(rows);

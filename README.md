@@ -5,8 +5,8 @@ Descripción
   - api-login — gestión de usuario, pagos, notificaciones y envío de correos via Gmail API.
   - api-emprendimiento-primaria — gestión de usuario y envío de correos/feedback via Gmail API.
   - api-accident-reporter — gestión de reportes (listar, crear, actualizar, eliminar).
-  - api-clasificador-peces — clasificador de imagenes de tres razas de peces: betta, guppy y molly
-  - api-clasificador-banana — clasificador de imagenes del estado de un banano: demasiado maduro, maduro, podrido y verde 
+  - api-clasificador-peces — obtención de información detallada sobre especies de peces, caracoles, gambas y tortugas.
+  - api-clasificador-banana — obtención de información detallada sobre especies de banano.
 
 Estructura
 - api-login/
@@ -27,8 +27,8 @@ Dependencias (por proyecto)
 - api-login: express, express-rate-limit, mysql2, dotenv, compression, googleapis, bcrypt
 - api-emprendimiento-primaria: express, express-rate-limit, mysql2, dotenv, compression, googleapis, bcrypt
 - api-accident-reporter: express, express-rate-limit, mysql2, dotenv, compression
-- api-clasificador-peces: express, express-rate-limit, @tensorflow/tfjs-node, sharp, dotenv, compression
-- api-clasificador-banana: express, express-rate-limit, @tensorflow/tfjs-node, sharp, dotenv, compression
+- api-clasificador-peces: express, express-rate-limit, mysql2, dotenv, compression, @google-cloud/translate
+- api-clasificador-banana: express, express-rate-limit, mysql2, dotenv, compression, @google-cloud/translate
 
 Instalación y ejecución (por cada API)
 1. Entrar al directorio de la API:
