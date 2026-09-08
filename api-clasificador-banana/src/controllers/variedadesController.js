@@ -42,37 +42,37 @@ async function translateArray(values, sourceLang = "es", targetLang = "es") {
     }
 }
 
-// Seleccionar especies
-const seleccionar_especies = async function (req, res) {
+// Seleccionar variedades
+const seleccionar_variedades = async function (req, res) {
     try {
         const { language } = req.query;
 
-        // Consulta todas las especies
-        const sql = "SELECT * FROM especies ORDER BY nombreComun ASC";
+        // Consulta todas las variedades
+        const sql = "SELECT * FROM variedades_banano ORDER BY nombre ASC";
         const [rows] = await pool.query(sql);
 
         if (rows.length === 0) {
-            return res.status(404).send("Error no hay especies");
+            return res.status(404).send("Error no hay variedades");
         }
-        // Traducción de los campos de cada especie
+        // Traducción de los campos de cada variedad
         for (let i = 0; i < rows.length; i++) {
-            const especie = rows[i];
-            const values = [especie.nombreComun, especie.zonaDeCultivo, especie.enfermedad];
+            const variedad = rows[i];
+            const values = [variedad.nombre, variedad.resistencia, variedad.origen];
             const translatedValues = await translateArray(values, "es", language);
             rows[i] = {
-                ...especie, // conserva otros campos
-                nombreComun: translatedValues[0],
-                zonaDeCultivo: translatedValues[1],
-                enfermedad: translatedValues[2]
+                ...variedad, // conserva otros campos
+                nombre: translatedValues[0],
+                resistencia: translatedValues[1],
+                origen: translatedValues[2]
             };
         }
         res.status(200).send(rows);
     } catch (error) {
-        console.error("Error al consultar especies: ", error);
+        console.error("Error al consultar variedades: ", error);
         res.status(500).send("Error del servidor");
     }
 };
 
 export {
-    seleccionar_especies
+    seleccionar_variedades
 };
