@@ -6,7 +6,7 @@ Descripción
   - api-emprendimiento-primaria — gestión de usuario y envío de correos/feedback via Gmail API.
   - api-accident-reporter — gestión de reportes (listar, crear, actualizar, eliminar).
   - api-clasificador-peces — obtención de información detallada sobre especies de peces, caracoles, gambas y tortugas.
-  - api-clasificador-banana — obtención de información detallada sobre especies de banano.
+  - api-clasificador-banana — obtención de información detallada sobre variedades de banano.
 
 Estructura
 - api-login/

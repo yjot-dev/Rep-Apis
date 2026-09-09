@@ -1,7 +1,7 @@
 # API: Clasificador de Bananas
 
 Descripción
-- API para obtener información detallada sobre especies de banano.
+- API para obtener información detallada sobre variedades de banano.
 
 Tecnologías y dependencias
 - Node.js (ESM)
@@ -16,8 +16,8 @@ Tecnologías y dependencias
 Archivos relevantes
 - server.js
 - package.json
-- src/routes/especiesRoute.js
-- src/controllers/especiesController.js
+- src/routes/variedadesRoute.js
+- src/controllers/variedadesController.js
 - .env — variables de entorno (no versionar)
 
 Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
@@ -25,7 +25,7 @@ Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 - NODE_ENV (development | production)
 
 Endpoints
-- GET /species — seleccionar_especies
+- GET /varieties — seleccionar_variedades
 
 Instalación
 ```sh
