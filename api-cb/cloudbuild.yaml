@@ -4,8 +4,8 @@ steps:
     args: [
       'build',
       '-t', 'gcr.io/clasificador-banana/api-cb:latest',
-      '-f', 'api-clasificador-banana/Dockerfile',
-      'api-clasificador-banana'
+      '-f', 'api-cb/Dockerfile',
+      'api-cb'
     ]
 
   # Paso 2: Subir la imagen al registro de contenedores

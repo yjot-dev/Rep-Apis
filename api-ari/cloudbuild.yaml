@@ -3,22 +3,22 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', 'gcr.io/accidentreporter-488120/api-ar:latest',
-      '-f', 'api-accident-reporter/Dockerfile',
-      'api-accident-reporter'
+      '-t', 'gcr.io/accidentreporter-488120/api-ari:latest',
+      '-f', 'api-ari/Dockerfile',
+      'api-ari'
     ]
 
   # Paso 2: Subir la imagen al registro de contenedores
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/accidentreporter-488120/api-ar:latest']
+    args: ['push', 'gcr.io/accidentreporter-488120/api-ari:latest']
 
   # Paso 3: Desplegar en Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       [
-        'run', 'deploy', 'servicio-api-ar',
-        '--image', 'gcr.io/accidentreporter-488120/api-ar:latest',
+        'run', 'deploy', 'servicio-api-ari',
+        '--image', 'gcr.io/accidentreporter-488120/api-ari:latest',
         '--region', 'us-central1',
         '--platform', 'managed',
         '--allow-unauthenticated'

@@ -1,5 +1,5 @@
 {
-  "name": "api-accident-reporter",
+  "name": "api-ari",
   "version": "2.5.7",
   "description": "",
   "main": "server.js",

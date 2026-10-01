@@ -4,8 +4,8 @@ steps:
     args: [
       'build',
       '-t', 'gcr.io/clasificador-peces/api-cp:latest',
-      '-f', 'api-clasificador-peces/Dockerfile',
-      'api-clasificador-peces'
+      '-f', 'api-cp/Dockerfile',
+      'api-cp'
     ]
 
   # Paso 2: Subir la imagen al registro de contenedores
