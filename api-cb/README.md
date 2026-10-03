@@ -1,4 +1,4 @@
-# API: Clasificador de Bananas
+# API: CB
 
 Descripción
 - API para obtener información detallada sobre variedades de banano.
@@ -33,7 +33,7 @@ npm install
 ```
 
 Configuración
-- Crear/editar archivo de variables de entorno en [.env](api-clasificador-banana/.env) con:
+- Crear/editar archivo de variables de entorno en [.env](api-cb/.env) con:
   - PORT, NODE_ENV
 
 Ejecución

@@ -1,4 +1,4 @@
-# API: Login
+# API: GUPN
 
 Descripción
 - API REST para gestión de usuarios y autenticación, envío de correos vía Gmail API (OAuth2), pagos con Google Play Billing y notificaciones con Firebase.
@@ -39,7 +39,7 @@ Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 
 Endpoints
 - Usuarios
-  - POST /api/users/login           — login
+  - POST /api/users/login           — iniciar sesión
   - POST /api/users                 — crear usuario
   - PATCH /api/users                — cambiar contraseña
   - PUT /api/users/:id              — actualizar usuario
@@ -61,7 +61,7 @@ npm install
 ```
 
 Configuración
-- Crear/editar archivo de variables de entorno en [.env](api-login/.env) con:
+- Crear/editar archivo de variables de entorno en [.env](api-gupn/.env) con:
   - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
 
 Ejecución

@@ -1,4 +1,4 @@
-# API: Emprendimiento Primaria
+# API: EMP
 
 Descripción
 - API REST para gestión de usuarios (registro, login, actualización, eliminación, cambio de clave) y envío de correos vía Gmail API (OAuth2).
@@ -32,7 +32,7 @@ Variables de entorno (ejemplo; no incluir valores sensibles en el repo)
 
 Endpoints
 - Usuarios
-  - POST /api/users/login       — login (body: { nombre|correo, clave })
+  - POST /api/users/login       — iniciar sesión
   - POST /api/users             — crear usuario
   - PUT  /api/users/:id         — actualizar usuario
   - PATCH /api/users            — cambiar contraseña
@@ -49,7 +49,7 @@ npm install
 ```
 
 Configuración
-- Crear/editar archivo de variables de entorno en [.env](api-emprendimiento-primaria/.env) con:
+- Crear/editar archivo de variables de entorno en [.env](api-emp/.env) con:
   - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
 
 Ejecución

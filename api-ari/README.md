@@ -1,4 +1,4 @@
-# API: Accident Reporter
+# API: ARI
 
 Descripción
 - API para gestionar reportes de accidentes (listar, crear, actualizar, eliminar).
@@ -40,7 +40,7 @@ npm install
 ```
 
 Configuración
-- Crear/editar archivo de variables de entorno en [.env](api-accident-reporter/.env) con:
+- Crear/editar archivo de variables de entorno en [.env](api-ari/.env) con:
   - MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
 
 Ejecución

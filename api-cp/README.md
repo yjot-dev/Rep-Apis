@@ -1,4 +1,4 @@
-# API: Clasificador de Peces
+# API: CP
 
 Descripción
 - API para obtener información detallada sobre especies de peces, caracoles, gambas y tortugas.
@@ -33,7 +33,7 @@ npm install
 ```
 
 Configuración
-- Crear/editar archivo de variables de entorno en [.env](api-clasificador-peces/.env) con:
+- Crear/editar archivo de variables de entorno en [.env](api-cp/.env) con:
   - PORT, NODE_ENV
 
 Ejecución
