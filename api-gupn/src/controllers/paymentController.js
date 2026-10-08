@@ -18,15 +18,7 @@ const validatePayment = async function (req, res) {
       return res.status(400).send("Faltan parámetros requeridos");
     }
 
-    // 1. Verificar primero si el token ya existe en DB para ahorrar llamadas a la API
-    const sql1 = "SELECT id FROM pagos WHERE purchase_token = ?";
-    const [existingToken] = await pool.query(sql1, [purchaseToken]);
-
-    if (existingToken.length > 0) {
-      return res.status(409).send("Token de compra ya procesado");
-    }
-
-    // 2. Autenticación con Google API
+    // 1. Autenticación con Google API
     const serviceAccount = JSON.parse(process.env.GPB_SERVICE_ACCOUNT);
     if (serviceAccount.private_key) {
       serviceAccount.private_key = serviceAccount.private_key.replace(/\n/g, '\n');
@@ -41,7 +33,7 @@ const validatePayment = async function (req, res) {
       auth: auth,
     });
 
-    // 3. Validar compra con Google Play
+    // 2. Validar compra con Google Play
     const response = await androidPublisher.purchases.products.get({
       packageName: process.env.GPB_PACKAGE_NAME,
       productId: productId,
@@ -50,10 +42,10 @@ const validatePayment = async function (req, res) {
 
     const purchaseData = response.data;
 
-    // 4. Verificar si la compra es válida
+    // 3. Verificar si la compra es válida
     if (purchaseData.purchaseState === 0) {
 
-      // 5. RECONOCER LA COMPRA (Obligatorio para que Google no la reembolse)
+      // 4. RECONOCER LA COMPRA (Obligatorio para que Google no la reembolse)
       if (purchaseData.acknowledgementState === 0) {
         await androidPublisher.purchases.products.acknowledge({
           packageName: process.env.GPB_PACKAGE_NAME,
@@ -62,13 +54,12 @@ const validatePayment = async function (req, res) {
         });
       }
 
-      // 6. Guardar en Base de Datos
+      // 5. Guardar en Base de Datos
       const pagoNuevo = {
         monto: amount,
         moneda: money,
-        fecha: date ? toLocalString(date) : toLocalString(new Date(parseInt(purchaseData.purchaseTimeMillis))),
         estado: purchaseData.purchaseState,
-        purchase_token: purchaseToken,
+        fecha: date ? toLocalString(date) : toLocalString(new Date(parseInt(purchaseData.purchaseTimeMillis))),
         usuario_id: userId
       };
 
@@ -97,16 +88,11 @@ const validatePayment = async function (req, res) {
 // Seleccionar pagos de usuario
 const selectPayments = async function (req, res) {
   try {
-    const { userId, maxRows } = req.query;
+    const { userId } = req.query;
 
     // Consulta para obtener los pagos del usuario
     let sql = "SELECT * FROM pagos WHERE usuario_id = ? ORDER BY fecha DESC";
     let params = [userId];
-
-    if (maxRows) {
-      sql += " LIMIT ?";
-      params.push(Number(maxRows));
-    }
 
     const [rows] = await pool.query(sql, params);
 
@@ -128,6 +114,6 @@ const selectPayments = async function (req, res) {
 }
 
 export {
-  selectPayments,
-  validatePayment
+  validatePayment,
+  selectPayments
 };

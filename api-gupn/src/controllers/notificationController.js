@@ -54,16 +54,11 @@ const sendNotification = async function (req, res) {
 // Seleccionar notificaciones del usuario
 const selectNotification = async function (req, res) {
   try {
-    const { userId, maxRows } = req.query;
+    const { userId } = req.query;
 
     // Consulta para obtener los pagos del usuario
     let sql = "SELECT * FROM notificaciones WHERE usuario_id = ? ORDER BY fecha DESC";
     let params = [userId];
-
-    if (maxRows) {
-      sql += " LIMIT ?";
-      params.push(Number(maxRows));
-    }
 
     const [rows] = await pool.query(sql, params);
 
