@@ -1,5 +1,5 @@
 import pool from "./src/bd/db.js";
-import expressRateLimit from "express-rate-limit";
+import expressRateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import express from "express";
 import compression from "compression";
 import { api1 } from "./src/routes/userRoute.js";
@@ -12,6 +12,7 @@ const isProduction = process.env.NODE_ENV === "production"; // Detectar entorno 
 const dailyLimiter = expressRateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 horas
   max: 80, // máximo 80 requests por IP al día
+  keyGenerator: ipKeyGenerator, // usa la IPv4 o IPv6 confiable
   message: "Has alcanzado el límite diario de solicitudes."
 });
 
@@ -19,15 +20,14 @@ const PORT = process.env.PORT; // Configurar puerto dinámico
 
 const app = express();
 
+// Confía en el proxy del servidor remoto solo en producción
+if (isProduction) {
+  app.set('trust proxy', 1);
+}
+
 // Middlewares
 app.use(compression()); // Compresión de respuestas
 app.use(express.json({ limit: "20mb" })); // Parsear JSON con límite de 20MB
-if (!isProduction) {
-  app.use((req, res, next) => {
-    res.setHeader("abypass-tunnel-reminder", "true"); // Header LocalTunnel
-    next();
-  });
-}
 
 // Rutas
 app.get("/", (_, res) => {
