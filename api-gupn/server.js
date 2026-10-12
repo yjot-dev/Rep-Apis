@@ -1,5 +1,5 @@
 import pool from "./src/bd/db.js";
-import expressRateLimit, { ipKeyGenerator } from 'express-rate-limit';
+import expressRateLimit, { ipKeyGenerator } from "express-rate-limit";
 import express from "express";
 import compression from "compression";
 import { api1 } from "./src/routes/userRoute.js";
